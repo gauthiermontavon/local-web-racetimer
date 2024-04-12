@@ -60,7 +60,7 @@ function populateDataLapsEvent(){
 
 
 function addCategory(){
-	alert('add category');
+
 	var formdata = new FormData(document.getElementById("form-category"));
 	var category = {
 	  desc: formdata.getAll("description"),
@@ -97,7 +97,7 @@ function deleteCategory(_id){
 };
 
 function addLapEvent(){
-	alert('add lap event');
+
 	var formdata = new FormData(document.getElementById("form-lapEvent"));
 	var lapEvent = {
 	  desc: formdata.getAll("description"),

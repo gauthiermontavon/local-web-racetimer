@@ -8,7 +8,32 @@ var teams = new LDB.Collection('teams');
 var categories = new LDB.Collection('categories');
 var lapsEvent = new LDB.Collection('lapsEvent');
 
+
+
+
+var buttonsAction = '<div class="input-group w-50"><input type="text" id="newBib-$id$" class="form-control" aria-describedby="button-addon4">';
+buttonsAction +=  '<div class="input-group-append" id="button-addon4">';
+buttonsAction +=	'<button onclick="updateBib(\'$id$\');return false;" class="btn btn-outline-secondary" type="button" id="button-addon2">#</button>'
+ buttonsAction +=   '<button onclick="deleteAthlete(\'$id$\');return false;" type="button" class="btn btn-outline-danger"><svg class="bi"><use xlink:href="#trash"/></svg>Supprimer</button>'
+
+buttonsAction +=	'</div></div>';
+
+
 var deleteAthleteButton = '<button onclick="deleteAthlete(\'$id$\');return false;" type="button" class="btn btn-outline-danger"><svg class="bi"><use xlink:href="#trash"/></svg>Supprimer</button>';
+
+var editBibButton = '<div class="input-group w-50"><input type="text" class="form-control"><button class="btn btn-outline-secondary" type="button" id="button-addon2">#</button></div>';
+
+$('#table_startlist').bootstrapTable();
+
+$('#table').bootstrapTable("load",[{
+    id: 1,
+    name: 'Item 1',
+    price: '$1'
+  }, {
+    id: 2,
+    name: 'Item 2',
+    price: '$2'
+  }]);
 
 function reloadData(){
 
@@ -40,14 +65,14 @@ function populateDataPage(){
 
 	for(var i in data){
 			table += "<tr>";
-			table += "<td>"+i+"</td>" 
+			table += "<td>"+data[i].bib+"</td>" 
 					+ "<td>" + data[i].name +"</td>" 
 					+ "<td>" + data[i].year +"</td>" 
 					+ "<td>" + data[i].cat +"</td>"
 					+ "<td>" + data[i].team +"</td>"
 					+ "<td>" + data[i].lapEvent +"</td>"
 					+ "<td>" + data[i].ranked +"</td>"
-					+ "<td>" + deleteAthleteButton.replace("$id$",data[i]._id)+"</td>";
+					+ "<td>" + buttonsAction.replaceAll("$id$",data[i]._id)+"</td>";
 			table += "</tr>";
 	}
  
@@ -70,10 +95,10 @@ function renderOptionsForLapsEvent(){
 }
 
 function addAthlete(){
-	alert('add athlete');
 	var formdata = new FormData(document.getElementById("form-solo"));
 	//TODO calculate category
 	var athlete = {
+		bib : 0,
 	  name: formdata.getAll("fullname"),
 	  year: formdata.getAll("year"),
 	  cat: getCategoryForAthlete(formdata.getAll("year")).desc,
@@ -92,7 +117,6 @@ function addAthlete(){
 };
 
 function addTeam(){
-	alert('add athlete');
 	var formdata = new FormData(document.getElementById("form-team"));
 	
 	console.log('lastteam id:'+getLastCreatedTeam().pubId);
@@ -112,6 +136,7 @@ function addTeam(){
 	
 	var team_athletes = [
 		{
+			bib:0,
 			name: formdata.getAll("fullname1"),
 			year: formdata.getAll("year1"),
 			cat: getCategoryForAthlete(formdata.getAll("year1")).desc,
@@ -120,6 +145,7 @@ function addTeam(){
 			ranked:'true'  
 		},
 		{
+			bib:0,
 			name: formdata.getAll("fullname2"),
 			year: formdata.getAll("year2"),
 			cat: getCategoryForAthlete(formdata.getAll("year2")).desc,
@@ -162,6 +188,20 @@ function deleteAthlete(_id){
 	populateDataPage();
 	
 };
+
+function updateBib(_id){
+	console.log('newBib-'+_id);
+	console.log('updateBib'+document.getElementById('newBib-'+_id).value);
+	
+	athletes.find({ _id: _id }, function(results){
+		if(results[0]){
+			results[0].bib = document.getElementById('newBib-'+_id).value;
+			results[0].save();
+		}
+	});
+	
+	populateDataPage();
+}
 
 function getLastCreatedTeam(){
 	
