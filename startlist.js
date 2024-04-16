@@ -14,26 +14,9 @@ var lapsEvent = new LDB.Collection('lapsEvent');
 var buttonsAction = '<div class="input-group w-50"><input type="text" id="newBib-$id$" class="form-control" aria-describedby="button-addon4">';
 buttonsAction +=  '<div class="input-group-append" id="button-addon4">';
 buttonsAction +=	'<button onclick="updateBib(\'$id$\');return false;" class="btn btn-outline-secondary" type="button" id="button-addon2">#</button>'
- buttonsAction +=   '<button onclick="deleteAthlete(\'$id$\');return false;" type="button" class="btn btn-outline-danger"><svg class="bi"><use xlink:href="#trash"/></svg>Supprimer</button>'
+buttonsAction +=   '<button onclick="deleteAthlete(\'$id$\');return false;" type="button" class="btn btn-outline-danger"><svg class="bi"><use xlink:href="#trash"/></svg>Supprimer</button>'
 
 buttonsAction +=	'</div></div>';
-
-
-var deleteAthleteButton = '<button onclick="deleteAthlete(\'$id$\');return false;" type="button" class="btn btn-outline-danger"><svg class="bi"><use xlink:href="#trash"/></svg>Supprimer</button>';
-
-var editBibButton = '<div class="input-group w-50"><input type="text" class="form-control"><button class="btn btn-outline-secondary" type="button" id="button-addon2">#</button></div>';
-
-$('#table_startlist').bootstrapTable();
-
-$('#table').bootstrapTable("load",[{
-    id: 1,
-    name: 'Item 1',
-    price: '$1'
-  }, {
-    id: 2,
-    name: 'Item 2',
-    price: '$2'
-  }]);
 
 function reloadData(){
 
@@ -61,22 +44,16 @@ function must be there if page contains dynamic data (implement interface)
 */
 function populateDataPage(){
 	console.log('populate for startlist.html');
-	var table = "" ;
 
 	for(var i in data){
-			table += "<tr>";
-			table += "<td>"+data[i].bib+"</td>" 
-					+ "<td>" + data[i].name +"</td>" 
-					+ "<td>" + data[i].year +"</td>" 
-					+ "<td>" + data[i].cat +"</td>"
-					+ "<td>" + data[i].team +"</td>"
-					+ "<td>" + data[i].lapEvent +"</td>"
-					+ "<td>" + data[i].ranked +"</td>"
-					+ "<td>" + buttonsAction.replaceAll("$id$",data[i]._id)+"</td>";
-			table += "</tr>";
+		data[i].action =  buttonsAction.replaceAll("$id$",data[i]._id);
+
 	}
- 
-	document.getElementById("startList-data").innerHTML = table;
+
+	$('#table_startlist').bootstrapTable('destroy');
+	$('#table_startlist').bootstrapTable({data:data});
+	
+	//document.getElementById("startList-data").innerHTML = table;
 	
 	renderOptionsForLapsEvent();
  
@@ -87,16 +64,15 @@ function populateDataPage(){
 function renderOptionsForLapsEvent(){
 	var options = '<option selected>Choisir...</option>';
 	for (var i in dataLaps){
-		options += '<option value="'+dataLaps[i]._id+'">'+dataLaps[i].desc+'</option>';
+		options += '<option value="'+dataLaps[i].desc+'">'+dataLaps[i].desc+'</option>';
 	}
 	
 	document.getElementById('inputLap1').innerHTML=options;
 	document.getElementById('inputLap2').innerHTML=options;
-}
+};
 
 function addAthlete(){
 	var formdata = new FormData(document.getElementById("form-solo"));
-	//TODO calculate category
 	var athlete = {
 		bib : 0,
 	  name: formdata.getAll("fullname"),
@@ -131,9 +107,7 @@ function addTeam(){
 		console.log('team created:'+ JSON.stringify(team));
 	});
 	
-	//TODO : get id of category team
-	//TODO: get last Team id to get 
-	
+
 	var team_athletes = [
 		{
 			bib:0,
@@ -185,7 +159,7 @@ function deleteAthlete(_id){
 			data = items;
 	});
 
-	populateDataPage();
+	reloadData();
 	
 };
 
@@ -195,12 +169,13 @@ function updateBib(_id){
 	
 	athletes.find({ _id: _id }, function(results){
 		if(results[0]){
+			console.log('updateBib:'+JSON.stringify(results[0]));
 			results[0].bib = document.getElementById('newBib-'+_id).value;
 			results[0].save();
 		}
 	});
 	
-	populateDataPage();
+	reloadData();
 }
 
 function getLastCreatedTeam(){

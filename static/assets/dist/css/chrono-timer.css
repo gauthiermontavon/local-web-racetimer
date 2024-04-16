@@ -46,3 +46,12 @@
 .navbar .form-control {
   padding: .75rem 1rem;
 }
+
+
+/*
+Race page
+*/
+.maintimer{
+	border:1px solid red;
+	font-size:4em;
+}

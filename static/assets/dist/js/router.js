@@ -11,8 +11,11 @@ var routeChange = function(){
 		})
 		.then(data => {
 			var target = document.getElementById("router-outlet");
+			target.innerHTML = '';
+			target.replaceChildren();
 			target.innerHTML = data;
 			var newScript = document.createElement("script");
+			console.log('load script '+route+".js");
 			newScript.src = "./"+route+".js";
 			//once script injected is loaded, we can call method residing inside of it
 			newScript.onload = function(){
