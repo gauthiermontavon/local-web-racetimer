@@ -14,7 +14,12 @@ lapsEvent.find({}, function(results){
 
 var deleteCatButton = '<button onclick="deleteCategory(\'$id$\');return false;" type="button" class="btn btn-outline-danger"><svg class="bi"><use xlink:href="#trash"/></svg>Supprimer</button>';
 
-var deleteLapButton = '<button onclick="deleteLapEvent(\'$id$\');return false;" type="button" class="btn btn-outline-danger"><svg class="bi"><use xlink:href="#trash"/></svg>Supprimer</button>';
+
+var lapButtons = '<div class="input-group w-50"><input type="text" id="updOrder-$id$" class="form-control" aria-describedby="button-addon4">';
+lapButtons +=  '<div class="input-group-append" id="button-addon4">';
+lapButtons +=	'<button onclick="updateOrderLapEvent(\'$id$\');return false;" class="btn btn-outline-secondary" type="button" id="button-addon2">MàJ Ordre</button>';
+lapButtons += '<button onclick="deleteLapEvent(\'$id$\');return false;" type="button" class="btn btn-outline-danger"><svg class="bi"><use xlink:href="#trash"/></svg>Supprimer</button>';
+lapButtons +=	'</div></div>';
 
 function reloadData(){
 	populateDataPage();
@@ -36,7 +41,7 @@ function populateDataCategories(){
 					+ "<td>" + dataCat[i].desc +"</td>" 
 					+ "<td>" + dataCat[i].minYear +"</td>" 
 					+ "<td>" + dataCat[i].maxYear +"</td>"
-					+ "<td>" + deleteCatButton.replace("$id$",dataCat[i]._id)+"</td>";
+					+ "<td>" + deleteCatButton.replaceAll("$id$",dataCat[i]._id)+"</td>";
 			table += "</tr>";
 		}
  
@@ -50,8 +55,9 @@ function populateDataLapsEvent(){
 			table += "<tr>";
 			table += "<td>"+i+"</td>" 
 					+ "<td>" + dataLap[i].desc +"</td>" 
-					+ "<td>" + dataLap[i].distance +"</td>" 
-					+ "<td>" + deleteLapButton.replace("$id$",dataLap[i]._id)+"</td>";
+					+ "<td>" + dataLap[i].distance +"</td>"
+					+ "<td>" + dataLap[i].order +"</td>" 					
+					+ "<td>" + lapButtons.replaceAll("$id$",dataLap[i]._id)+"</td>";
 			table += "</tr>";
 		}
 	document.getElementById("lapEventList-data").innerHTML = table;
@@ -100,7 +106,9 @@ function addLapEvent(){
 
 	var formdata = new FormData(document.getElementById("form-lapEvent"));
 	var lapEvent = {
+		
 	  desc: formdata.getAll("description"),
+	  order:  formdata.getAll("order"),
 	  distance: formdata.getAll("distance") 
 	};
 
@@ -118,14 +126,32 @@ function deleteLapEvent(_id){
 	console.log('delete lapevent with id:'+_id);
 
 	lapsEvent.find({ _id: _id }, function(items){
-	for(var i in items){
-		items[i].delete();
-	}
-	lapsEvent.find({ }, function(items){
-		dataLap = items;
-	});
+		for(var i in items){
+			items[i].delete();
+		}
+		lapsEvent.find({ }, function(items){
+			dataLap = items;
+		});
 
-	populateDataLapsEvent();
+		populateDataLapsEvent();
 	});
 	
+};
+
+function updateOrderLapEvent(_id){
+	console.log('updateOrderLapEvent-'+_id);
+	console.log('updateOrderLapEvent'+document.getElementById('updOrder-'+_id).value);
+	lapsEvent.find({ _id: _id }, function(items){
+		if(items[0]){
+			items[0].order =  document.getElementById('updOrder-'+_id).value;
+			items[0].save();
+		}
+	});
+	
+	lapsEvent.find({ }, function(items){
+			dataLap = items;
+	});
+	populateDataLapsEvent();
+	
+	reloadData();
 };

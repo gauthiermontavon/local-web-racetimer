@@ -7,89 +7,82 @@ var StatusAthleteRace = {
 	RACING: "racing"
 };
 
-
 var dataAthletes = [];
 var dataLapsRace = [];
-
-var arrayAthletesLap = [];
+//displayedArray
+var arrayRankingsAthletes = [];
 
 var athletesColl = new LDB.Collection('athletes');
 var lapsRaceColl = new LDB.Collection('lapsRace');
+var lapsEventColl = new LDB.Collection('lapsEvent');
+
+var dataLapsEvent = [];
+lapsEventColl.find({}, function(results){
+	dataLapsEvent = results;
+});
 
 
 function reloadData(){
-
-
 	athletesColl.find({}, function(results){
 		dataAthletes = results;
 	});
-	//populateDataPage();
 };
 
+function saveRankings(){
+	//from arrayRankingsAthletes -> to dataLapsRace and save to Collection
+	
+	var lapRace = {
+			bibAthlete:dataAthletes[i].bib,
+			startTimeLap1:0,
+			endTimeLap1:0,
+			startTimeLap2:0,
+			endTimeLap2:0,
+			status:StatusAthleteRace.READY.toString()
+			
+		};
+		
+		
+	dataLapsRace.push(lapRace);
+};
 
 function init(){
 	console.log('data initialization');
 	//TODO: check bib attribution and team completed
 	dataAthletes = dataAthletes.sort((a, b) => a.bib - b.bib);
 	for(var i in dataAthletes){
-		var lapRace = {
-			bibAthlete:dataAthletes[i].bib,
+		
+		var rankingAth = {
+			bib:dataAthletes[i].bib,
+			name:dataAthletes[i].name,
+			cat:dataAthletes[i].cat,
+			team:dataAthletes[i].team,
+			lapEvent:dataAthletes[i].lapEvent,
 			startTimeLap1:0,
 			endTimeLap1:0,
 			startTimeLap2:0,
 			endTimeLap2:0,
-			status:StatusAthleteRace.READY.toString();
-			
+			timerlap1:0,
+			timerlap2:0,
+			timertotal:0,
+			status:StatusAthleteRace.READY.toString(),
+			action:''
 		};
 		
-		dataLapsRace.push(lapRace);
-	
-		dataLapsRace.push
+		arrayRankingsAthletes.push(rankingAth);
+
 	}
-	
-	
-	
-	//build fusionned array (dataAthletes and dataLapsRace) bib as common index 
-	
-	var lapAthleteResult = dataLapsRace.find((obj) => obj.bib === _bib.toString());
-	
-	
-		delete lapRace.__collection; //remove key collection (from LDBCollection)
-		delete lapRace._id; //remove key collection (from LDBCollection)
-		lapRace.timerlap1 = 0;
-		lapRace.timerlap2 = 0;
-		lapRace.year = 
-		lapRace.name = 
-		lapRace.cat =
-		lapRace.la
-		//si team => un seul lap
-		if(lapRace.team > 0){
-			lapRace.remainingLaps = "1";
-		}else{
-			lapRace.remainingLaps = "2";
-		}
-		lapRace.completedLaps = "0";
-		lapRace.status = StatusAthleteRace.READY.toString();
-		//lapRace.action = '<button type="button" class="btn btn-outline-secondary">DNS</button><button type="button" class="btn btn-outline-warning">DNF</button>';
-		console.log('data initialization '+i+':'+JSON.stringify(lapRace));
-		
-		
-		
-				
-		
+			
 	//==> bib,name,catégorie,team,discipline,temps VTT, temps CàP, temps total, status, action	
-	
-	
 	
 	//find athlete / order by team, bib
 	$('#table_rankings').bootstrapTable('destroy');
-	$('#table_rankings').bootstrapTable({data:dataLapsRace});
-	console.log('data initialization full datas:'+JSON.stringify(dataLapsRace));
+	$('#table_rankings').bootstrapTable({data:arrayRankingsAthletes});
+	console.log('data initialization full datas:'+JSON.stringify(arrayRankingsAthletes));
 
-	
+	/*
 	lapsRaceColl.save(dataLapsRace, function(_laps){
 	  console.log('all laps save:', _laps);
-	});
+	});*/
 	
 	renderBibButtonsHTML();
 };
@@ -103,10 +96,10 @@ function lapsEventStrToArray(str){
  render HTML methods
  */
 function renderBibButtonsHTML(){
-	dataLapsRace = dataLapsRace.sort((a, b) => a.bib - b.bib);
+	arrayRankingsAthletes = arrayRankingsAthletes.sort((a, b) => a.bib - b.bib);
 	var htmlButtons = '';
-	for(var i in dataLapsRace){
-		htmlButtons += '<button id="btn-bib-'+dataLapsRace[i].bib+'" type="button" class="btn btn-outline-warning" onclick="clickButtonBib('+dataLapsRace[i].bib+')">'+dataLapsRace[i].bib+'</button>';
+	for(var i in arrayRankingsAthletes){
+		htmlButtons += '<button id="btn-bib-'+arrayRankingsAthletes[i].bib+'" type="button" class="btn btn-outline-warning" onclick="clickButtonBib('+arrayRankingsAthletes[i].bib+')">'+arrayRankingsAthletes[i].bib+'</button>';
 	}
 
 	console.log('render bib grid'+htmlButtons);
@@ -126,6 +119,7 @@ function enterOnBibInput(_bib){
 //
 function finishLapForBib(_bib){
 	// updateClass: btn-outline-warning -> -=> btn-outline-success -> btn-success/disable
+	
 	var btnBib = document.getElementById('btn-bib-'+_bib);
 	console.log('class list of btn :'+btnBib.classList);
 	if(btnBib.classList.contains('btn-outline-warning')){
@@ -138,38 +132,76 @@ function finishLapForBib(_bib){
 		btnBib.disabled = true;
 	}
 	console.log('class list of btn 2 :'+btnBib.classList);
-	var lapAthleteResult = dataLapsRace.find((obj) => obj.bib === _bib.toString());
 	
 	
-		if(results[0]){
-			console.log('updateBib:'+JSON.stringify(results[0]));
-			results[0].bib = document.getElementById('newBib-'+_id).value;
-			results[0].save();
+	var ranking = arrayRankingsAthletes.find((obj) => obj.bib === _bib.toString());
+	
+	var lapEventArray = lapsEventStrToArray(ranking.lapEvent);
+	
+	if(lapEventArray.length == 1){
+		if(getOrderSettingForLapEvent(lapEventArray[0])==1){
+			ranking.endTimeLap1 = '';
+			//TODO: start timer for team mate startTimeLap2
+		}
+		if(getOrderSettingForLapEvent(lapEventArray[0])==2){
+			ranking.endTimeLap2 = '';
+		}
+	}
+	else if(lapEventArray.length == 2){
+		if(ranking.endTimeLap1 == 0){
+			ranking.endTimeLap1 ='';
+			ranking.startTimeLap2 = '';
+		}
+		else{
+			ranking.endTimeLap2 = '';
 		}
 	
+	}
 	
-	//lapAthleteResult.
-	console.log('athlete lap:'+JSON.stringify(lapAthleteResult));
+	//getOrderSettingForLapEvent
+	/*
+	if(lapEventArray.length == 1 && lapEventArray[0] === 'VTT'
+	lapsEventStrToArray
+	if(ranking.timerlap1 == 0)
+		
+	ranking.timerlap1 = ;
+	*/
+	
 };
 
 function finishEventForBibOrTeam(){
 
 };
-//TIMER FEATURES
-function updateTimerForBib(bib,lapEvent){
+
+function getOrderSettingForLapEvent(_desc){
+	var lapEvent = dataLapsEvent.find((obj) => obj.desc === _desc.toString());
+	return lapEvent.order;
 }
+
+function startRace(){
+	startTimer();
+	for(var i in arrayRankingsAthletes){
+		
+		htmlButtons += '<button id="btn-bib-'+arrayRankingsAthletes[i].bib+'" type="button" class="btn btn-outline-warning" onclick="clickButtonBib('+arrayRankingsAthletes[i].bib+')">'+arrayRankingsAthletes[i].bib+'</button>';
+	}
+	
+};
+
+
+//TIMER FEATURES
+
 
 
 
 
 var timer;
-var startTime;
+var mainStartTime;
 var running = false;
 var idElementTimer = "maintimer";
 
 function startTimer() {
       if (!running) {
-        startTime = Date.now();
+        mainStartTime = Date.now();
         timer = setInterval(updateTimer, 1000);
         running = true;
 	  }
@@ -183,19 +215,19 @@ function stopTimer() {
       }
 };
 function resetTimer() {
-      stopTimer();
-      document.getElementById(idElementTimer).textContent = '00:00:00';
+    stopTimer();
+    document.getElementById(idElementTimer).textContent = '00:00:00';
 };
-function updateTimer() {
-      var currentTime = Date.now() - startTime;
-      var hours = Math.floor(currentTime / 3600000);
-      var minutes = Math.floor((currentTime % 3600000) / 60000);
-      var seconds = Math.floor((currentTime % 60000) / 1000);
 
-      document.getElementById(idElementTimer).textContent = formatTime(hours) + ':' + formatTime(minutes) + ':' + formatTime(seconds);
+function updateTimer() {
+    var currentTime = Date.now() - mainStartTime;
+    var hours = Math.floor(currentTime / 3600000);
+    var minutes = Math.floor((currentTime % 3600000) / 60000);
+    var seconds = Math.floor((currentTime % 60000) / 1000);
+
+    document.getElementById(idElementTimer).textContent = formatTime(hours) + ':' + formatTime(minutes) + ':' + formatTime(seconds);
 }
 
-  
-    function formatTime(time) {
-      return time < 10 ? '0' + time : time;
-    }
+function formatTime(time) {
+	return time < 10 ? '0' + time : time;
+}

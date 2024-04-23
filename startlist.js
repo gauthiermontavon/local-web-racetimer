@@ -176,7 +176,7 @@ function updateBib(_id){
 	});
 	
 	reloadData();
-}
+};
 
 function getLastCreatedTeam(){
 	
