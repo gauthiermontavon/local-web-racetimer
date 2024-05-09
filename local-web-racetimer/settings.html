@@ -1,0 +1,96 @@
+ <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+        <h1 class="h2">Paramètres</h1>
+      </div>
+<nav>
+  <div class="nav nav-tabs" id="nav-tab" role="tablist">
+    <button class="nav-link active" id="nav-main-tab" data-bs-toggle="tab" data-bs-target="#nav-main" type="button" role="tab" aria-controls="nav-main" aria-selected="true">Général</button>
+    <button class="nav-link" id="nav-categories-tab" data-bs-toggle="tab" data-bs-target="#nav-categories" type="button" role="tab" aria-controls="nav-categories" aria-selected="false" onclick="populateDataCategories()">Catégories</button>
+    <button class="nav-link" id="nav-laps-tab" data-bs-toggle="tab" data-bs-target="#nav-laps" type="button" role="tab" aria-controls="nav-laps" aria-selected="false" onclick="populateDataLapsEvent()">Disciplines</button>
+  </div>
+</nav>
+<div class="tab-content" id="nav-tabContent">
+  <div class="tab-pane fade show active" id="nav-main" role="tabpanel" aria-labelledby="nav-main-tab">...</div>
+  <div class="tab-pane fade" id="nav-categories" role="tabpanel" aria-labelledby="nav-categories-tab">
+	<h3 class="mt-4">Nouvelle catégorie</h3>
+		<form class="row g-3" id="form-category">
+			<div class="col-md-4">
+				<label for="inputDesc" class="form-label">Description</label>
+				<input type="text" class="form-control" id="inputDesc" name="description">
+			</div>
+			<div class="col-md-2">
+				<label for="inputYearMin" class="form-label">Année min.</label>
+				<input type="text" class="form-control" id="inputYearMin" name="yearMin">
+			</div>
+			<div class="col-md-2">
+				<label for="inputYearMax" class="form-label">Année max.</label>
+				<input type="text" class="form-control" id="inputYearMax" name="yearMax">
+			</div>
+	
+			<div class="col-md-2">
+				<label for="btnSave" class="form-label">&nbsp;</label>
+				<button class="btn btn-primary form-control" id="btnSave" onclick="addCategory();return false;">Enregistrer</button>
+			</div>
+		
+		</form>
+
+	<h3 class="mt-4 mb-4">Liste des catégories</h3>
+	 <div class="table-responsive small">
+        <table class="table table-striped table-sm">
+          <thead>
+            <tr>
+              <th scope="col">#</th>
+              <th scope="col">Description</th>
+              <th scope="col">Année min.</th>
+              <th scope="col">Année max.</th>
+			  <th scope="col">Action</th>
+            </tr>
+          </thead>
+          <tbody id="catList-data">
+           
+          </tbody>
+        </table>
+      </div>
+  
+  </div>
+  <div class="tab-pane fade" id="nav-laps" role="tabpanel" aria-labelledby="nav-laps-tab">
+  <h3 class="mt-4">Nouvelle discipline</h3>
+		<form class="row g-3" id="form-lapEvent">
+			<div class="col-md-4">
+				<label for="inputDesc" class="form-label">Description</label>
+				<input type="text" class="form-control" id="inputDesc" name="description">
+			</div>
+			<div class="col-md-2">
+				<label for="inputDistance" class="form-label">Distance</label>
+				<input type="text" class="form-control" id="inputDistance" name="distance">
+			</div>
+			<div class="col-md-2">
+				<label for="inputOrder" class="form-label">Ordre</label>
+				<input type="text" class="form-control" id="inputOrder" name="order">
+			</div>
+		
+	
+			<div class="col-md-2">
+				<label for="btnSave" class="form-label">&nbsp;</label>
+				<button class="btn btn-primary form-control" id="btnSave" onclick="addLapEvent();return false;">Enregistrer</button>
+			</div>
+		
+		</form>
+  <h3 class="mt-4 mb-4">Liste des disciplines</h3>
+	 <div class="table-responsive small">
+        <table class="table table-striped table-sm">
+          <thead>
+            <tr>
+              <th scope="col">#</th>
+              <th scope="col">Description</th>
+              <th scope="col">Distance</th>
+			   <th scope="col">Ordre</th>
+			  <th scope="col">Action</th>
+            </tr>
+          </thead>
+          <tbody id="lapEventList-data">
+           
+          </tbody>
+        </table>
+      </div>
+	 </div>
+</div>

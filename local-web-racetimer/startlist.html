@@ -1,0 +1,107 @@
+
+      <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+        <h1 class="h2">Cigathlon 2024</h1>
+      </div>
+	  
+	<h2>Enregistrement des participants</h2>
+	<p class="d-inline-flex gap-1">
+ 
+		<button class="btn btn-outline-primary" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolo" aria-expanded="false" aria-controls="collapseExample">
+			Participant SOLO
+		</button>
+		<button class="btn btn-outline-primary" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTeam" aria-expanded="false" aria-controls="collapseExample">
+			Equipe
+		</button>
+  
+	</p>
+	<div class="collapse" id="collapseSolo">
+	  <div class="card card-body">
+		<form class="row g-3" id="form-solo">
+			<div class="col-md-4">
+				<label for="inputName" class="form-label">NOM Prénom</label>
+				<input type="text" class="form-control" id="inputName" name="fullname">
+			</div>
+			<div class="col-md-2">
+				<label for="inputYear" class="form-label">Année</label>
+				<input type="text" class="form-control" id="inputYear" name="year">
+			</div>
+	
+			<div class="col-md-2">
+				<label for="btnSave" class="form-label">&nbsp;</label>
+				<button class="btn btn-primary form-control" id="btnSave" onclick="addAthlete();return false;">Enregistrer</button>
+			
+			</div>
+		
+		</form>
+
+	  </div>
+	</div>
+	
+	<div class="collapse" id="collapseTeam">
+	  <div class="card card-body">
+		<form class="row g-3" id="form-team">
+			<div class="col-md-4">
+				<label for="inputName1" class="form-label">NOM Prénom</label>
+				<input type="text" class="form-control" id="inputName1" name="fullname1">
+			</div>
+			<div class="col-md-2">
+				<label for="inputYear1" class="form-label">Année</label>
+				<input type="text" class="form-control" id="inputYear1" name="year1">
+			</div>
+			<div class="col-md-2">
+				<label for="inputLap1" class="form-label">Discipline</label>
+				<!--<input type="text" class="form-control" id="inputLap1" name="lap1">-->
+				<select class="form-select" aria-label="Default select example" id="inputLap1" name="lap1">
+				</select>
+				
+				
+			</div>
+			<div class="col-md-4"></div>
+			<div class="col-md-4">
+				<label for="inputName2" class="form-label">NOM Prénom</label>
+				<input type="text" class="form-control" id="inputName2" name="fullname2">
+			</div>
+			<div class="col-md-2">
+				<label for="inputYear2" class="form-label">Année</label>
+				<input type="text" class="form-control" id="inputYear2" name="year2">
+			</div>
+			<div class="col-md-2">
+				<label for="inputLap2" class="form-label">Discipline</label>
+				<select class="form-select" aria-label="Default select example" id="inputLap2" name="lap2">
+				</select>
+			</div>
+	
+			<div class="col-md-2">
+				<label for="btnSave" class="form-label">&nbsp;</label>
+				<button class="btn btn-primary form-control" id="btnSave" onclick="addTeam();return false;">Enregistrer</button>
+			
+			</div>
+		
+		</form>
+
+	  </div>
+	</div>
+	
+      <h2>Liste de départ</h2>
+      <div class="table-responsive small">
+        <table class="table table-striped table-sm" id="table_startlist">
+          <thead>
+            <tr>
+              <th scope="col" data-field="bib" data-sortable="true">#</th>
+              <th scope="col" data-field="name">NOM Prénom</th>
+              <th scope="col" data-field="year">Année</th>
+              <th scope="col" data-field="cat">Catégorie</th>
+              <th scope="col" data-field="team">Team</th>
+			  <th scope="col" data-field="lapEvent">Discipline</th>
+			  <th scope="col" data-field="ranked">Classé</th>
+			  <th scope="col" data-field="action">Action</th>
+            </tr>
+          </thead>
+          <tbody id="startList-data">
+           
+          </tbody>
+        </table>
+      </div>
+	  
+	  
+	 
