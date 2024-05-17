@@ -286,10 +286,17 @@ function finishLapForBib(_bib){
 			//start timer for team mate startTimeLap2
 			//si il n'est pas ready, il ne faut pas le démarrer, peut etre déja parti car manual start ?
 			if(rankingTeamMate.status === StatusAthleteRace.READY.toString()){
+				console.log('second team has already started..');
 				rankingTeamMate.startTimeLap2 = current;
 				rankingTeamMate.timerlap2 = runningAnimHtml;
 				document.getElementById('btn-bib-'+rankingTeamMate.bib).disabled = false;
 			}
+			if(rankingTeamMate.status === StatusAthleteRace.FINISHED.toString()){
+				console.log('second team has already finish..');
+				ranking.timertotal = calculateTimer(ranking.startTimeLap1,rankingTeamMate.endTimeLap2);
+				rankingTeamMate.timertotal = ranking.timertotal;
+			}
+			
 		}
 		if(orderSettingLap==2){
 			finishEventForTeam(ranking,rankingTeamMate,current);
@@ -307,7 +314,7 @@ function finishEventForBib(_objRankAth, currentTime){
 	_objRankAth.timertotal = calculateTimer(_objRankAth.startTimeLap1,_objRankAth.endTimeLap2);
 	_objRankAth.status = StatusAthleteRace.FINISHED.toString() ;
 };
-
+//
 function finishEventForTeam(_objRankAth,_objRankTeamMate, currentTime){
 	console.log('FINSHED EVENT FOR TEAM');
 	_objRankAth.endTimeLap2 = currentTime;
