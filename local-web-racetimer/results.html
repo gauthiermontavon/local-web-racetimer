@@ -1,0 +1,49 @@
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+	<h2>Cigathlon 2024 - Resultats</h2>
+</div>
+
+<h2>Classement</h2>
+
+<p class="d-inline-flex gap-1">
+		Par catégorie
+		<button class="btn btn-outline-primary" type="button" aria-expanded="false" aria-controls="collapseExample" onclick="filterCategory('');">
+			Tous
+		</button>
+		<button class="btn btn-outline-primary" type="button" aria-expanded="false" aria-controls="collapseExample" onclick="filterCategory('Seniors');">
+			Seniors
+		</button>
+		<button class="btn btn-outline-primary" type="button" aria-expanded="false" aria-controls="collapseExample">
+			Actifs
+		</button>
+		<button class="btn btn-outline-primary" type="button" aria-expanded="false" aria-controls="collapseExample">
+			Fun
+		</button>
+		<button class="btn btn-outline-primary" type="button" aria-expanded="false" aria-controls="collapseExample">
+			Team
+		</button>
+ </p>
+
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 ">
+	<div class="table-responsive small">
+        <table class="table table-striped table-sm" id="table_rankings" data-filter-control="true">
+          <thead>
+            <tr>
+              <th scope="col" data-field="bib" data-sortable="true">#</th>
+              <th scope="col" data-field="name">NOM Prénom</th>
+              <th scope="col" data-field="cat">Catégorie</th>
+              <th scope="col" data-field="team">Team</th>
+			  <th scope="col" data-field="lapEvent">Discipline</th>
+			  <th scope="col" data-field="timerlap1" data-sortable="true">Temps VTT</th>
+			  <th scope="col" data-field="timerlap2" data-sortable="true">Temps Course à pied</th>
+			  <th scope="col" data-field="timertotal" data-sortable="true">Temps total</th>
+			  <th scope="col" data-field="status">Statut</th>
+			
+            </tr>
+          </thead>
+          <tbody id="rankings-data">
+           
+          </tbody>
+        </table>
+      </div>
+</div>
+

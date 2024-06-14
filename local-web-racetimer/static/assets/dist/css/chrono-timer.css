@@ -32,6 +32,13 @@
   font-size: .75rem;
 }
 
+a#main-link[disabled],
+div#main-menu[disabled],
+button#race-init-btn[disabled]
+{
+	pointer-events: none;
+	opacity:0.3;
+}
 /*
  * Navbar
  */
@@ -54,4 +61,15 @@ Race page
 .maintimer{
 	border:1px solid red;
 	font-size:4em;
+}
+
+/* Results page */
+
+.no-filter-control {
+  height: 40px;
+}
+
+.filter-control {
+  margin: 0 2px 2px;
+
 }

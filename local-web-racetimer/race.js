@@ -1,3 +1,11 @@
+//FIXME arrayRankingsAthletes vs dataAthletes
+/*
+dataAthletes : contient uniquement les données à sauvegarder dans DB
+arrayRankingsAthletes : données issues de dataAthletes + données à afficher de la course live (status, btn actions)
+voir si optimal, ou si il faut directmeent éditer les dataAthletes durant le "LIVE"
+*/
+
+
 //TODO make it const to another file not loaded through dynamic routing...
 var StatusAthleteRace = {
 	DNS: "DNS",
@@ -19,13 +27,14 @@ buttonsAction +=	'</div>';
 
 
 var dataAthletes = [];
-var dataLapsRace = [];
 //displayedArray
-var arrayRankingsAthletes = [];
+var arrayRankingsAthletes = []; //==> resuts
 
 var athletesColl = new LDB.Collection('athletes');
-var lapsRaceColl = new LDB.Collection('lapsRace');
 var lapsEventColl = new LDB.Collection('lapsEvent');
+//counter to keep if athlete is expected on finish line
+var cptAthleteOnFinishLine = 0;
+var cptAthleteOnStartLine = 0;
 
 
 function reloadData(){
@@ -35,28 +44,16 @@ function reloadData(){
 	$('#table_rankings').bootstrapTable({data:arrayRankingsAthletes});
 };
 
-function saveRankings(){
-	//from arrayRankingsAthletes -> to dataLapsRace and save to Collection
-	
-	var lapRace = {
-			bibAthlete:dataAthletes[i].bib,
-			startTimeLap1:0,
-			endTimeLap1:0,
-			startTimeLap2:0,
-			endTimeLap2:0,
-			status:StatusAthleteRace.READY.toString()
-			
-		};
-		
-		
-	dataLapsRace.push(lapRace);
-};
 
 function init(){
 	console.log('data initialization');
 	athletesColl.find({}, function(results){
 		dataAthletes = results;
+		cptAthleteOnStartLine = dataAthletes.length;
+		document.getElementById("info-status-race").innerHTML= "("+cptAthleteOnFinishLine+"/"+cptAthleteOnStartLine+")";
 	});
+	
+	
 	//TODO: check bib attribution and team completed
 	
 	dataAthletes = dataAthletes.sort((a, b) => a.bib - b.bib);
@@ -82,18 +79,15 @@ function init(){
 		arrayRankingsAthletes.push(rankingAth);
 
 	}
+	
+	console.log('dataAthletes:'+JSON.stringify(dataAthletes));
+	console.log('arrayRankingsAthletes:'+JSON.stringify(arrayRankingsAthletes));
 			
 	//==> bib,name,catégorie,team,discipline,temps VTT, temps CàP, temps total, status, action	
 	
 	//find athlete / order by team, bib
 	$('#table_rankings').bootstrapTable('destroy');
 	$('#table_rankings').bootstrapTable({data:arrayRankingsAthletes});
-	//console.log('data initialization full datas:'+JSON.stringify(arrayRankingsAthletes));
-
-	/*
-	lapsRaceColl.save(dataLapsRace, function(_laps){
-	  console.log('all laps save:', _laps);
-	});*/
 	
 	renderBibButtonsHTML();
 };
@@ -106,6 +100,13 @@ function lapsEventStrToArray(str){
 /**
  render HTML methods
  */
+ 
+function updateStatusRaceInfosHTML(){
+	document.getElementById("info-status-race").innerHTML= "("+cptAthleteOnFinishLine+"/"+cptAthleteOnStartLine+")";
+	if(cptAthleteOnStartLine==cptAthleteOnFinishLine){
+		stopRace();
+	}		
+}
 function renderBibButtonsHTML(){
 	
 	arrayRankingsAthletes = arrayRankingsAthletes.sort((a, b) => a.bib - b.bib);
@@ -139,7 +140,9 @@ function dnsBib(event,_bib){
 	updateStyleBibFlag(_bib,null,event.target);
 	var ath = arrayRankingsAthletes.find((obj) => obj.bib === _bib.toString());
 	
-	ath.status = StatusAthleteRace.DNS.toString() ;
+	ath.status = StatusAthleteRace.DNS.toString();
+	cptAthleteOnFinishLine+=1;
+	updateStatusRaceInfosHTML();
 	reloadData();
 	
 };
@@ -155,6 +158,8 @@ function dnfBib(event,_bib){
 	if(ath.timerlap2.includes('spinner-border')){
 		ath.timerlap2 = '-';
 	}
+	cptAthleteOnFinishLine+=1;
+	updateStatusRaceInfosHTML();
 	reloadData();
 };
 
@@ -283,10 +288,14 @@ function finishLapForBib(_bib){
 			ranking.endTimeLap1 = current;
 			ranking.timerlap1 = calculateTimer(ranking.startTimeLap1,ranking.endTimeLap1);
 			ranking.status = StatusAthleteRace.FINISHED.toString() ;
+			cptAthleteOnFinishLine+=1;
+			updateStatusRaceInfosHTML();
+			
 			//start timer for team mate startTimeLap2
 			//si il n'est pas ready, il ne faut pas le démarrer, peut etre déja parti car manual start ?
 			if(rankingTeamMate.status === StatusAthleteRace.READY.toString()){
 				console.log('second team has already started..');
+				rankingTeamMate.status = StatusAthleteRace.RACING.toString() ;
 				rankingTeamMate.startTimeLap2 = current;
 				rankingTeamMate.timerlap2 = runningAnimHtml;
 				document.getElementById('btn-bib-'+rankingTeamMate.bib).disabled = false;
@@ -313,6 +322,8 @@ function finishEventForBib(_objRankAth, currentTime){
 	_objRankAth.timerlap2 = calculateTimer(_objRankAth.startTimeLap2,_objRankAth.endTimeLap2);
 	_objRankAth.timertotal = calculateTimer(_objRankAth.startTimeLap1,_objRankAth.endTimeLap2);
 	_objRankAth.status = StatusAthleteRace.FINISHED.toString() ;
+	cptAthleteOnFinishLine+=1;
+	updateStatusRaceInfosHTML();
 };
 //
 function finishEventForTeam(_objRankAth,_objRankTeamMate, currentTime){
@@ -323,6 +334,8 @@ function finishEventForTeam(_objRankAth,_objRankTeamMate, currentTime){
 	_objRankAth.timertotal = calculateTimer(_objRankTeamMate.startTimeLap1,_objRankAth.endTimeLap2);
 	_objRankTeamMate.timertotal = calculateTimer(_objRankTeamMate.startTimeLap1,_objRankAth.endTimeLap2);
 	_objRankAth.status = StatusAthleteRace.FINISHED.toString() ;
+	cptAthleteOnFinishLine+=1;
+	updateStatusRaceInfosHTML();
 }
 function getLapEventDescForOrderSettings(_order){
 	//FIXME: find({ desc:_desc} doesnt work
@@ -387,30 +400,70 @@ function setStartTimeLap1Athletes(){
 	
 	
 };
-function startRace(){
-	startTimer();
+
+
+function saveResults(){
 	
-	setStartTimeLap1Athletes();
+	athletesColl.find({}, function(results){
+		console.log('dataAthletes in DB before save :'+JSON.stringify(results));
 	
+	});
+	
+	
+	//pour chaque ath+ses données LIVE race, classé par bib
+	arrayRankingsAthletes = arrayRankingsAthletes.sort((a, b) => a.bib - b.bib);
 	for(var i in arrayRankingsAthletes){
-		
-		//htmlButtons += '<button id="btn-bib-'+arrayRankingsAthletes[i].bib+'" type="button" class="btn btn-outline-warning" onclick="clickButtonBib('+arrayRankingsAthletes[i].bib+')">'+arrayRankingsAthletes[i].bib+'</button>';
+		//on persiste les données live timer et on save en DB
+		athletesColl.find({ bib: arrayRankingsAthletes[i].bib }, function(results){
+			if(results[0]){
+				results[0].timerlap1 = arrayRankingsAthletes[i].timerlap1;
+				results[0].timerlap2 = arrayRankingsAthletes[i].timerlap2;
+				results[0].timertotal = arrayRankingsAthletes[i].timertotal;
+				results[0].save();
+			};
+		});
 	}
+	athletesColl.find({}, function(results){
+		console.log('dataAthletes in DB after save :'+JSON.stringify(results));
+	
+	});
 	
 	
+
 };
 
-
 //TIMER FEATURES
-
-
-
-
 
 var timer;
 var mainStartTime;
 var running = false;
 var idElementTimer = "maintimer";
+
+function startRace(){
+	document.getElementById("main-menu").setAttribute("disabled",true);
+	document.getElementById("main-link").setAttribute("disabled",true);
+	document.getElementById("race-init-btn").setAttribute("disabled",true);
+	if(!running){
+		startTimer();
+	
+		setStartTimeLap1Athletes();
+	}
+};
+
+function stopRace(){
+	//TODO: saveRankings fo results
+	saveResults();
+	//document.getElementById("main-menu").setAttribute("disabled",false);
+	//document.getElementById("main-link").setAttribute("disabled",false);
+	//document.getElementById("race-init-btn").setAttribute("disabled",false);
+	document.getElementById("main-menu").removeAttribute("disabled");
+	document.getElementById("main-link").removeAttribute("disabled");
+	document.getElementById("race-init-btn").removeAttribute("disabled");
+	if(running){
+		stopTimer();
+	}
+}
+
 
 function startTimer() {
       if (!running) {

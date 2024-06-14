@@ -1,5 +1,5 @@
 
-const routeWhitelist = ["settings", "startlist", "race"];
+const routeWhitelist = ["settings", "startlist", "race","results"];
 var routeChange = function(){
 	console.log('route to '+location.hash);
 	var route = location.hash.substr(1);

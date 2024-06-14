@@ -75,12 +75,15 @@ function addAthlete(){
 	var formdata = new FormData(document.getElementById("form-solo"));
 	var athlete = {
 		bib : 0,
-	  name: formdata.getAll("fullname"),
-	  year: formdata.getAll("year"),
-	  cat: getCategoryForAthlete(formdata.getAll("year")).desc,
-	  team: 0,
-	  lapEvent : formatAllLapsEvent(),
-	  ranked:'true'
+		name: formdata.getAll("fullname"),
+		year: formdata.getAll("year"),
+		cat: getCategoryForAthlete(formdata.getAll("year")).desc,
+		team: 0,
+		lapEvent : formatAllLapsEvent(),
+		timerlap1:'-',
+		timerlap2:'-',
+		timertotal:'-',
+		ranked:'true'
 	  
 	};
 
@@ -116,6 +119,9 @@ function addTeam(){
 			cat: getCategoryForAthlete(formdata.getAll("year1")).desc,
 			team: team.pubId,
 			lapEvent : formdata.getAll("lap1"),
+			timerlap1:'-',
+			timerlap2:'-',
+			timertotal:'-',
 			ranked:'true'  
 		},
 		{
@@ -125,6 +131,9 @@ function addTeam(){
 			cat: getCategoryForAthlete(formdata.getAll("year2")).desc,
 			team: team.pubId,
 			lapEvent : formdata.getAll("lap2"),
+			timerlap1:'-',
+			timerlap2:'-',
+			timertotal:'-',
 			ranked:'true'
 		}
 	];

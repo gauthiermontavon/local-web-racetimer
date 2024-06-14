@@ -14,8 +14,10 @@
 
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@docsearch/css@3">
 
-<link href="./static/assets/dist/css/bootstrap.min.css" rel="stylesheet">
-<link href="./static/assets/dist/bootstrap-table/bootstrap-table.min.css" rel="stylesheet">
+	<link href="./static/assets/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link href="./static/assets/dist/bootstrap-table/bootstrap-table.min.css" rel="stylesheet">
+
+	<link rel="stylesheet" href="https://code.jquery.com/ui/1.13.3/themes/base/jquery-ui.css">
 
 <meta name="theme-color" content="#712cf9">
 
@@ -190,15 +192,21 @@
   <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z"/>
   <path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z"/>
 	</symbol>
+
+<symbol id="trophy" viewBox="0 0 16 16">
+  <path d="M2.5.5A.5.5 0 0 1 3 0h10a.5.5 0 0 1 .5.5q0 .807-.034 1.536a3 3 0 1 1-1.133 5.89c-.79 1.865-1.878 2.777-2.833 3.011v2.173l1.425.356c.194.048.377.135.537.255L13.3 15.1a.5.5 0 0 1-.3.9H3a.5.5 0 0 1-.3-.9l1.838-1.379c.16-.12.343-.207.537-.255L6.5 13.11v-2.173c-.955-.234-2.043-1.146-2.833-3.012a3 3 0 1 1-1.132-5.89A33 33 0 0 1 2.5.5m.099 2.54a2 2 0 0 0 .72 3.935c-.333-1.05-.588-2.346-.72-3.935m10.083 3.935a2 2 0 0 0 .72-3.935c-.133 1.59-.388 2.885-.72 3.935M3.504 1q.01.775.056 1.469c.13 2.028.457 3.546.87 4.667C5.294 9.48 6.484 10 7 10a.5.5 0 0 1 .5.5v2.61a1 1 0 0 1-.757.97l-1.426.356a.5.5 0 0 0-.179.085L4.5 15h7l-.638-.479a.5.5 0 0 0-.18-.085l-1.425-.356a1 1 0 0 1-.757-.97V10.5A.5.5 0 0 1 9 10c.516 0 1.706-.52 2.57-2.864.413-1.12.74-2.64.87-4.667q.045-.694.056-1.469z"/>
+</symbol>
 </svg>
 
+
+
 <header class="navbar sticky-top bg-dark flex-md-nowrap p-0 shadow" data-bs-theme="dark">
-  <a class="navbar-brand col-md-3 col-lg-2 me-0 px-3 fs-6 text-white" href="./index.html">ChronoWEBv2</a>
+  <a id="main-link" class="navbar-brand col-md-3 col-lg-2 me-0 px-3 fs-6 text-white" href="./index.html">ChronoWEBv2</a>
 </header>
 
 <div class="container-fluid">
   <div class="row">
-    <div  id="main-menu" class="sidebar border border-right col-md-3 col-lg-2 p-0 bg-body-tertiary">
+    <div id="main-menu" class="sidebar border border-right col-md-3 col-lg-2 p-0 bg-body-tertiary">
       <div class="offcanvas-md offcanvas-end bg-body-tertiary" tabindex="-1" id="sidebarMenu" aria-labelledby="sidebarMenuLabel">
         <div class="offcanvas-body d-md-flex flex-column p-0 pt-lg-3 overflow-y-auto">
           <ul class="nav flex-column">
@@ -212,6 +220,12 @@
               <a class="nav-link d-flex align-items-center gap-2" href="#race">
                 <svg class="bi"><use xlink:href="#chrono"/></svg>
                 Race
+              </a>
+            </li>
+			 <li class="nav-item">
+              <a class="nav-link d-flex align-items-center gap-2" href="#results">
+                <svg class="bi"><use xlink:href="#trophy"/></svg>
+                Results
               </a>
             </li>
           </ul>
@@ -235,11 +249,16 @@
   </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/jquery/dist/jquery.min.js"></script>
+<!--<script src="https://cdn.jsdelivr.net/npm/jquery/dist/jquery.min.js"></script>-->
+<script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+<script src="https://code.jquery.com/ui/1.13.3/jquery-ui.js"></script>
 
 <script src="./static/assets/dist/js/bootstrap.bundle.min.js"></script>
 <script src="./static/assets/dist/bootstrap-table/bootstrap-table.min.js"></script>
 <script src="./static/assets/dist/bootstrap-table/bootstrap-table-editable.js"></script> 
+<script src="./static/assets/dist/bootstrap-table/bootstrap-table-filter-control.min.js"></script> 
+
+
 <script src="./static/assets/dist/js/router.js"></script>
 <script src="./static/assets/dist/js/LocalDB.js"></script>
 <script src="./utils.js"></script>
