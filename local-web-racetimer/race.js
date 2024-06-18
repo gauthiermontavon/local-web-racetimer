@@ -15,7 +15,7 @@ var StatusAthleteRace = {
 	RACING: "racing"
 };
 
-const runningAnimHtml = '<div class="text-center"><div class="spinner-border spinner-border-sm text-primary" role="status"></div></div>';
+var runningAnimHtml = '<div class="text-center"><div class="spinner-border spinner-border-sm text-primary" role="status"></div></div>';
 
 //var buttonsAction = '<div class="input-group w-50"><input type="text" id="newBib-$id$" class="form-control" aria-describedby="button-addon4">';
 var buttonsAction =  '<div class="input-group-append" id="button-addon4">';
@@ -111,14 +111,29 @@ function renderBibButtonsHTML(){
 	
 	arrayRankingsAthletes = arrayRankingsAthletes.sort((a, b) => a.bib - b.bib);
 	var htmlButtons = '';
+	var cpt = 0;
+	var bibPerRow = 10;
+	console.log('length of bib array:'+arrayRankingsAthletes.length);
 	for(var i in arrayRankingsAthletes){
-		htmlButtons += '<button id="btn-bib-'+arrayRankingsAthletes[i].bib+'" type="button" class="btn btn-outline-warning" onclick="clickButtonBib('+arrayRankingsAthletes[i].bib+')"';
+		cpt = cpt + 1;
+		if(cpt === 1){
+			htmlButtons += '<div class="row g-0 row-cols-auto">'
+		}
+		console.log('new line?:'+cpt%bibPerRow);
+		htmlButtons += '<div class="col"><button id="btn-bib-'+arrayRankingsAthletes[i].bib+'" type="button" style="width:45px;" class="btn btn-outline-warning" onclick="clickButtonBib('+arrayRankingsAthletes[i].bib+')"';
 		if(!isBibInMainStartRace(arrayRankingsAthletes[i].bib)){
 			htmlButtons += 'disabled ';
 		}
-		htmlButtons += '>'+arrayRankingsAthletes[i].bib+'</button>';
+		htmlButtons += '>'+arrayRankingsAthletes[i].bib+'</button></div>';
+		if(cpt%bibPerRow === 0 && cpt<arrayRankingsAthletes.length){
+			htmlButtons += '</div><div class="row g-0 row-cols-auto">'
+		}
+		if(cpt === arrayRankingsAthletes.length){
+			htmlButtons += '</div>';
+		}
 		console.log(arrayRankingsAthletes[i].bib+' in main start?:'+isBibInMainStartRace(arrayRankingsAthletes[i].bib));
 	}
+	
 
 	//console.log('render bib grid'+htmlButtons);
 	document.getElementById('grid-bib').innerHTML=htmlButtons;

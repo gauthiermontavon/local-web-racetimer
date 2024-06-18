@@ -8,10 +8,7 @@ var teams = new LDB.Collection('teams');
 var categories = new LDB.Collection('categories');
 var lapsEvent = new LDB.Collection('lapsEvent');
 
-
-
-
-var buttonsAction = '<div class="input-group w-50"><input type="text" id="newBib-$id$" class="form-control" aria-describedby="button-addon4">';
+var buttonsAction = '<div class="input-group w-50"><input type="text" id="newBib-$id$" class="form-control" aria-describedby="button-addon4" value="">';
 buttonsAction +=  '<div class="input-group-append" id="button-addon4">';
 buttonsAction +=	'<button onclick="updateBib(\'$id$\');return false;" class="btn btn-outline-secondary" type="button" id="button-addon2">#</button>'
 buttonsAction +=   '<button onclick="deleteAthlete(\'$id$\');return false;" type="button" class="btn btn-outline-danger"><svg class="bi"><use xlink:href="#trash"/></svg>Supprimer</button>'
@@ -71,7 +68,9 @@ function renderOptionsForLapsEvent(){
 	document.getElementById('inputLap2').innerHTML=options;
 };
 
-function addAthlete(){
+
+
+function addAthleteSolo(){
 	var formdata = new FormData(document.getElementById("form-solo"));
 	var athlete = {
 		bib : 0,
@@ -94,12 +93,35 @@ function addAthlete(){
 	
 	});
 };
+function addAthleteFun(){
+	var formdata = new FormData(document.getElementById("form-fun"));
+	var athlete = {
+		bib : 0,
+		name: formdata.getAll("fullname"),
+		year: formdata.getAll("year"),
+		cat: 'Fun',
+		team: 0,
+		lapEvent : formatAllLapsEvent(),
+		timerlap1:'-',
+		timerlap2:'-',
+		timertotal:'-',
+		ranked:'true'
+	  
+	};
+
+	athletesColl.save(athlete, function(_athlete){
+	  console.log('New athlete:', _athlete);
+	  reloadData();
+	  clearAllFormInputs("form-fun");
+	
+	});
+};
 
 function addTeam(){
 	var formdata = new FormData(document.getElementById("form-team"));
 	
 	console.log('lastteam id:'+getLastCreatedTeam().pubId);
-	console.log('cat for new athlete1:'+getCategoryForAthlete(formdata.getAll("year1")));
+	
 	
 	var team = {
 		pubId : getLastCreatedTeam().pubId+1,
@@ -116,7 +138,7 @@ function addTeam(){
 			bib:0,
 			name: formdata.getAll("fullname1"),
 			year: formdata.getAll("year1"),
-			cat: getCategoryForAthlete(formdata.getAll("year1")).desc,
+			cat: 'Team',
 			team: team.pubId,
 			lapEvent : formdata.getAll("lap1"),
 			timerlap1:'-',
@@ -128,7 +150,7 @@ function addTeam(){
 			bib:0,
 			name: formdata.getAll("fullname2"),
 			year: formdata.getAll("year2"),
-			cat: getCategoryForAthlete(formdata.getAll("year2")).desc,
+			cat: 'Team',
 			team: team.pubId,
 			lapEvent : formdata.getAll("lap2"),
 			timerlap1:'-',
@@ -211,7 +233,8 @@ function getCategoryForAthlete(year){
 			var minYear = parseInt(dataCat[i].minYear);
 			var maxYear = parseInt(dataCat[i].maxYear);
 			console.log('getCategoryForAthlete '+yearInt+' min'+minYear+' max'+maxYear);
-			if (yearInt >= minYear && yearInt <= maxYear){
+			console.log('getCategoryForAthlete '+dataCat[i].custom);
+			if (yearInt >= minYear && yearInt <= maxYear && dataCat[i].custom){
 				return dataCat[i];
 			}
 	}

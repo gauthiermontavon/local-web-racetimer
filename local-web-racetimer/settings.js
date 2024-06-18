@@ -71,7 +71,8 @@ function addCategory(){
 	var category = {
 	  desc: formdata.getAll("description"),
 	  minYear: formdata.getAll("yearMin"),
-	  maxYear: formdata.getAll("yearMax")
+	  maxYear: formdata.getAll("yearMax"),
+	  custom : false
 	  
 	};
 
