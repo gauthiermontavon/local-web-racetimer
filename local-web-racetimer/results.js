@@ -18,7 +18,7 @@ function reloadData(){
 
 	console.log('JSON:'+JSON.stringify(dataAthletes));
 	$('#table_rankings').bootstrapTable('destroy');
-	$('#table_rankings').bootstrapTable({data:dataAthletes});
+	$('#table_rankings').bootstrapTable({data:dataAthletes, printStyles: ['https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.2/css/all.min.css']});
 	
 	init();
 };
@@ -42,6 +42,10 @@ function init(){
 
 
 function printResults(){
+	
+	 var printDate = new Intl.DateTimeFormat('fr-CH', {
+    dateStyle: 'long'
+  }).format(new Date());
 	/*const doc = new jsPDF({
 	  orientation: "landscape",
 	  unit: "in",
@@ -77,23 +81,34 @@ function printResults(){
 	]);
 	//generatedata => formatDataForRankingVTT();
 	var doc = new jsPDF({ putOnlyUsedFonts: true, orientation: "landscape" });
+	doc.setFontSize(16);
+	doc.text("Cigathlon du "+printDate,120,10);
+	doc.setFontSize(10);
+	doc.text("Classement  VTT",130,20);
 
-	doc.table(1, 1, formatDataForRankingVTT(), headersCategories, { autoSize: true });
+	doc.table(10, 25, formatDataForRanking("timerlap1"), headersCategories, { autoSize: true, fontSize:6 });
+	doc.setFontSize(10);
+	doc.text("Classement course à pied",130,100);
+
+	doc.table(10, 120, formatDataForRanking("timerlap2"), headersCategories, { autoSize: true, fontSize:6 });
 	
 	doc.save("two-by-four.pdf");
 };
 
 
-//var formatDataForRankingVTT = function() {
-function formatDataForRankingVTT(){
-	//order by timer VTT (timerlap1)
+//parameter timerlap = timerlap1/timerlap2/timertotal
+function formatDataForRanking(timerlap){
+	//order by timer
 	console.log("pdfdataCatMap:"+JSON.stringify(pdfdataCatMap));
-	dataAthletes = dataAthletes.sort((a,b) => a.timerlap1 - b.timerlap1);
+
+	dataAthletes = dataAthletes.sort((a,b) => a[timerlap] - b[timerlap]);
+
+
 	//push each athlete according to his category = pdfdataCatMap("team")[0] : first athlete of team
 	for(var i in dataAthletes){
 		console.log("push athlete into category "+dataAthletes[i].cat+":"+JSON.stringify(dataAthletes[i]));
-		if(dataAthletes[i].timerlap1 === '-'){
-			console.log('no because no timer for VTT');
+		if(dataAthletes[i][timerlap] === '-'){
+			console.log('no because no timer for this lap');
 		}else{
 			pdfdataCatMap.get(dataAthletes[i].cat).push(dataAthletes[i]);
 		}
@@ -133,14 +148,14 @@ function formatDataForRankingVTT(){
 			console.log('athlete found:'+athlete);
 			if(athlete){
 				somebodyAtRang = true;
-				data["rang_"+dataCat[i].desc] = rang;
+				data["rang_"+dataCat[i].desc] = rang.toString();
 				data["cat_"+dataCat[i].desc] = athlete.name;
-				data["chrono_"+dataCat[i].desc] = athlete.timerlap1;
+				data["chrono_"+dataCat[i].desc] = athlete[timerlap];
 			}
 			else{
-				data["rang_"+dataCat[i].desc] = rang;
-				data["cat_"+dataCat[i].desc] = "";
-				data["chrono_"+dataCat[i].desc] = "";
+				data["rang_"+dataCat[i].desc] = rang.toString();
+				data["cat_"+dataCat[i].desc] = " ";
+				data["chrono_"+dataCat[i].desc] = " ";
 			}
 			
 		}
