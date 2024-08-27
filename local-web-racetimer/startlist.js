@@ -8,7 +8,7 @@ var teams = new LDB.Collection('teams');
 var categories = new LDB.Collection('categories');
 var lapsEvent = new LDB.Collection('lapsEvent');
 
-var buttonsAction = '<div class="input-group w-50"><input type="text" id="newBib-$id$" class="form-control" aria-describedby="button-addon4" value="">';
+var buttonsAction = '<div class="input-group w-50" id="action-row-$index$"><input type="text" id="newBib-$id$" class="form-control" aria-describedby="button-addon4" value="" onkeydown="if(event.keyCode == 13){updateBib(\'$id$\')}">';
 buttonsAction +=  '<div class="input-group-append" id="button-addon4">';
 buttonsAction +=	'<button onclick="updateBib(\'$id$\');return false;" class="btn btn-outline-secondary" type="button" id="button-addon2">#</button>'
 buttonsAction +=   '<button onclick="deleteAthlete(\'$id$\');return false;" type="button" class="btn btn-outline-danger"><svg class="bi"><use xlink:href="#trash"/></svg>Supprimer</button>'
@@ -43,7 +43,7 @@ function populateDataPage(){
 	console.log('populate for startlist.html');
 
 	for(var i in data){
-		data[i].action =  buttonsAction.replaceAll("$id$",data[i]._id);
+		data[i].action =  buttonsAction.replaceAll("$index$",i).replaceAll("$id$",data[i]._id);
 
 	}
 
@@ -66,6 +66,7 @@ function renderOptionsForLapsEvent(){
 	
 	document.getElementById('inputLap1').innerHTML=options;
 	document.getElementById('inputLap2').innerHTML=options;
+	document.getElementById('inputLapFun').innerHTML=options;
 };
 
 
@@ -101,7 +102,7 @@ function addAthleteFun(){
 		year: formdata.getAll("year"),
 		cat: 'Fun',
 		team: 0,
-		lapEvent : formatAllLapsEvent(),
+		lapEvent : formdata.getAll("lapFun"),
 		timerlap1:'-',
 		timerlap2:'-',
 		timertotal:'-',

@@ -13,6 +13,7 @@ security.fileuri.strict_origin_policy
 
 ### settings
 - settings, discpline mettre message gestion seulement 2 discipline, order 1,2
+- rankings table, dynamic max ranking by category / hardcoded in results.js
 ### start list
 - Participant FUN et catégorie FUN
 - on enter bib update
@@ -22,6 +23,8 @@ security.fileuri.strict_origin_policy
 - stop timer (only stop if all finished)
 - implement reset (are you sure + reset)
 - if running => only play/Stop  reset and bib buttons 
+### rankings
+- consider settings category to generate rankings by category( currently hardcoded)
 ### général
 - implement message error and info (delete, save,) with toast bootstrap
 - controles validité (dates, nom, discipline intégrité team)
