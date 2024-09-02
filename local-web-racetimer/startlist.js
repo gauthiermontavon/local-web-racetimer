@@ -196,6 +196,18 @@ function deleteAthlete(_id){
 };
 
 function updateBib(_id){
+	
+	console.log('updateBib index current:'+event.target.parentNode.id.substring(11));
+	//event.target.parentNode.id
+	var nextInputIndex = parseInt(event.target.parentNode.id.substring(11))+1;
+	console.log('updateBibnext Index:'+nextInputIndex);
+	
+	var nextInput = document.getElementById('action-row-'+nextInputIndex).getElementsByClassName("form-control")[0];
+	
+	
+		console.log('next input to focus:'+nextInput.id);
+	//action-row-$index$
+	
 	console.log('newBib-'+_id);
 	console.log('updateBib'+document.getElementById('newBib-'+_id).value);
 	
@@ -207,7 +219,10 @@ function updateBib(_id){
 		}
 	});
 	
+	//nextInput.focus();
+	
 	reloadData();
+	document.getElementById(nextInput.id).focus();
 };
 
 function getLastCreatedTeam(){
