@@ -17,6 +17,12 @@ document.addEventListener('keydown', (event) => {
 			undoLastBibEntered();
 	   }
    }
+   
+   if(event.code.substring(0,5) == 'Digit' && running) {
+	   event.preventDefault();
+	   document.getElementById('input-bib').value += event.key;
+	   //console.log('put bib');
+   }
 });
 
 document.addEventListener('keyup', (event) => {
@@ -37,9 +43,9 @@ var runningAnimHtml = '<div class="text-center"><div class="spinner-border spinn
 
 //var buttonsAction = '<div class="input-group w-50"><input type="text" id="newBib-$id$" class="form-control" aria-describedby="button-addon4">';
 var buttonsAction =  '<div class="input-group-append" id="button-addon4">';
-buttonsAction +=	'<button id="btn-dns-$bib$" onclick="dnsBib(event,\'$bib$\');return false;" class="btn btn-sm btn-outline-primary" type="button" id="button-addon1">DNS</button>'
+buttonsAction +=	'<button id="btn-dns-$bib$"  onclick="dnsBib(event,\'$bib$\');return false;" class="btn btn-sm btn-outline-primary" type="button" id="button-addon1">DNS</button>'
 buttonsAction +=	'<button id="btn-dnf-$bib$" onclick="dnfBib(event,\'$bib$\');return false;" class="btn btn-sm btn-outline-primary" type="button" id="button-addon2">DNF</button>'
-buttonsAction +=   '<button onclick="startManualBib(\'$bib$\');return false;" type="button" class="btn btn-sm btn-outline-primary"><svg class="bi"><use xlink:href="#chrono"/></svg>Manuel</button>'
+buttonsAction +=   '<button onclick="startManualBib(event,\'$bib$\');return false;" type="button" class="btn btn-sm btn-outline-primary"><svg class="bi"><use xlink:href="#chrono"/></svg>Manuel</button>'
 
 buttonsAction +=	'</div>';
 
@@ -108,6 +114,31 @@ function init(){
 	//==> bib,name,catégorie,team,discipline,temps VTT, temps CàP, temps total, status, action	
 	
 	//find athlete / order by team, bib
+	var featureEdit = false;
+	$('#table_rankings').on('click-cell.bs.table', function(e,value,row,$element){
+		if(!running && featureEdit){
+			var ranking = arrayRankingsAthletes.find((obj) => obj.bib === $element.bib.toString());
+			console.log('WE WANT EDIT FIELD:'+e+' row:'+row+' value:'+value);
+			console.log('WE WANT EDIT FIELD value:'+JSON.stringify($element));
+			
+			if(value=='timerlap1'){
+				ranking.timerlap1= '<input id="edit_1" type=\"text\" value=\"'+ranking.timerlap1+'\">';
+				
+			}
+			if(value=='timerlap2'){
+				ranking.timerlap1= '<input type=\"text\" value=\"\">';
+			}
+			
+			
+			
+			//$('#table_rankings').bootstrapTable('refresh');
+			reloadData();
+			document.getElementById('edit_1').focus();
+		}
+		
+	});
+	
+	
 	$('#table_rankings').bootstrapTable('destroy');
 	$('#table_rankings').bootstrapTable({data:arrayRankingsAthletes});
 	
@@ -231,35 +262,45 @@ function undoLastBibEntered(){
 
 
 function dnsBib(event,_bib){
-	console.log('dns bib :'+_bib);
-	
-	updateStyleBibFlag(_bib,null,event.target);
+	event.preventDefault();
+	console.log('dns bib :'+_bib+' this jquery:'+$(this));
 	var ath = arrayRankingsAthletes.find((obj) => obj.bib === _bib.toString());
-	
-	ath.status = StatusAthleteRace.DNS.toString();
-	cptAthleteOnFinishLine+=1;
-	updateStatusRaceInfosHTML();
-	reloadData();
+	if(ath.status == StatusAthleteRace.READY.toString()){
+		updateStyleBibFlag(_bib,null,event.target);
+		ath.status = StatusAthleteRace.DNS.toString();
+		cptAthleteOnFinishLine+=1;
+		updateStatusRaceInfosHTML();
+		
+		reloadData();
+	}else{
+		alert('Seul un athlète pas encore parti peut être déclaré non partant');
+	}
 	
 };
 function dnfBib(event,_bib){
+	event.preventDefault();
 	console.log('dnf bib :'+_bib);
-	
-	updateStyleBibFlag(_bib,null,event.target);
 	var ath = arrayRankingsAthletes.find((obj) => obj.bib === _bib.toString());
-	ath.status = StatusAthleteRace.DNF.toString() ;
-	if(ath.timerlap1.includes('spinner-border')){
-		ath.timerlap1 = '-';
+	if(ath.status == StatusAthleteRace.RACING.toString()){
+		updateStyleBibFlag(_bib,null,event.target);
+		
+		ath.status = StatusAthleteRace.DNF.toString() ;
+		if(ath.timerlap1.includes('spinner-border')){
+			ath.timerlap1 = '-';
+		}
+		if(ath.timerlap2.includes('spinner-border')){
+			ath.timerlap2 = '-';
+		}
+		cptAthleteOnFinishLine+=1;
+		updateStatusRaceInfosHTML();
+		reloadData();
+	}else{
+		alert('Seul un athlète en course peut abandonner');
 	}
-	if(ath.timerlap2.includes('spinner-border')){
-		ath.timerlap2 = '-';
-	}
-	cptAthleteOnFinishLine+=1;
-	updateStatusRaceInfosHTML();
-	reloadData();
 };
 
-function startManualBib(_bib){
+function startManualBib(event,_bib){
+	event.preventDefault();
 	console.log('manual start');
 	var current = Date.now();
 	var ranking = arrayRankingsAthletes.find((obj) => obj.bib === _bib.toString());
@@ -669,6 +710,7 @@ function updateTimer() {
 }
 
 function calculateTimer(start,end){
+	console.log('calculateTimer start:'+start+',end:'+end);
 	var resultTime = end - start;
 	var hours = Math.floor(resultTime / 3600000);
     var minutes = Math.floor((resultTime % 3600000) / 60000);
@@ -678,6 +720,19 @@ function calculateTimer(start,end){
 	return formattedTime;
 	
 }
+
+function calculateTimerAddition(time1,time2){
+	
+	var resultTime = chronoFormatToEpoch(time1)+chronoFormatToEpoch(time2);
+	var hours = Math.floor(resultTime / 3600000);
+    var minutes = Math.floor((resultTime % 3600000) / 60000);
+    var seconds = Math.floor((resultTime % 60000) / 1000);
+	
+	var formattedTime = formatTime(hours) + ':' + formatTime(minutes) + ':' + formatTime(seconds);
+	return formattedTime;
+}
+
+
 
 
 function formatTime(time) {

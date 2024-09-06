@@ -1,5 +1,3 @@
-const { jsPDF } = window.jspdf;
-
 var categories = new LDB.Collection('categories');
 var lapsEvent = new LDB.Collection('lapsEvent');
 //TODO make it const to another file not loaded through dynamic routing...
@@ -93,3 +91,21 @@ function initLapEvents(){
 	  console.log('Default events created:', _items);	
 	});
 };
+
+
+function chronoFormatToEpoch(chrono){
+	//var originalFormat = '01:02:03';
+
+	// get todays date
+	var time = new Date();
+
+	// set the correct time
+	var timeValues = chrono.split(':').map((element) => Number(element));
+	time.setHours(timeValues[0], timeValues[1], timeValues[2]);
+	console.log('correct time values:', time.toString());
+
+	// get epoch value
+	var epoch = time.valueOf();
+	console.log('epoch:', epoch);
+	return epoch;
+}

@@ -10,7 +10,7 @@ https://support.mozilla.org/fr/kb/configurer-firefox-avec-autoconfig
 security.fileuri.strict_origin_policy
 
 ## TODO
-
+- Convert project into real POO Javascript
 ### settings
 - settings, discpline mettre message gestion seulement 2 discipline, order 1,2
 - rankings table, dynamic max ranking by category / hardcoded in results.js
@@ -33,7 +33,6 @@ security.fileuri.strict_origin_policy
 
 
 ## Technos
-https://github.com/parallax/jsPDF?tab=readme-ov-file
 https://agnostic.github.io/LocalDB.js/
 
 
