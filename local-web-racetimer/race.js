@@ -23,6 +23,10 @@ document.addEventListener('keydown', (event) => {
 	   document.getElementById('input-bib').value += event.key;
 	   //console.log('put bib');
    }
+   
+   if(event.key == 'Enter'){
+		keyPressedBibInput(document.getElementById('input-bib'));
+   }
 });
 
 document.addEventListener('keyup', (event) => {
@@ -74,6 +78,7 @@ function reloadData(){
 
 function init(){
 	console.log('data initialization');
+	dataAthletes = [];
 	athletesColl.find({}, function(results){
 		dataAthletes = results;
 		cptAthleteOnStartLine = dataAthletes.length;
@@ -163,7 +168,6 @@ function updateStatusRaceInfosHTML(){
 	}		
 }
 function renderBibButtonsHTML(){
-	
 	arrayRankingsAthletes = arrayRankingsAthletes.sort((a, b) => a.bib - b.bib);
 	var htmlButtons = '';
 	var cpt = 0;
@@ -205,8 +209,8 @@ function keyPressedBibInput(ele) {
 };
 
 function clickButtonBib(_bib){
-
-	if(!document.getElementById('btn-bib-'+_bib).disabled){
+	
+	if(document.getElementById('btn-bib-'+_bib) && !document.getElementById('btn-bib-'+_bib).disabled){
 		console.log('click  bib n°'+_bib);
 		listInsertedBib.push(_bib);
 		document.getElementById("input-bib-info").innerHTML = listInsertedBib.join(", ");
@@ -217,17 +221,15 @@ function clickButtonBib(_bib){
 };
 
 function undoLastBibEntered(){
-	//TODO : manager team mate undo start if undo the first one
+	//TODO/FIXME : manager team mate undo start if undo the first one
 	var _bib = listInsertedBib.pop();
 	document.getElementById("input-bib-info").innerHTML = listInsertedBib.join(", ");
 	console.log("last inserted bib 2:"+_bib);
 	var ranking = arrayRankingsAthletes.find((obj) => obj.bib === _bib.toString());
-	
-	
-	
-	
-	ranking.status = StatusAthleteRace.RACING.toString();
-	if(ranking.endTimeLap2 > 0){
+	console.log("ranking status: "+ranking.status);
+	console.log("ranking endTimeLap1: "+ranking.endTimeLap1);
+	console.log("ranking endTimeLap2: "+ranking.endTimeLap2);
+	if(ranking.endTimeLap2 > 0 ){
 		ranking.timerlap2 = runningAnimHtml;
 		ranking.endTimeLap2 = 0;
 		ranking.timersplit = '';
@@ -239,10 +241,15 @@ function undoLastBibEntered(){
 		ranking.endTimeLap1 = 0;
 		ranking.timerlap2 = '-';
 		ranking.startTimeLap2 = 0;
-		ranking.timersplit = '';	
+		ranking.timersplit = '';
+		if(ranking.status == StatusAthleteRace.DNF.toString()){
+			cptAthleteOnFinishLine-=1;
+		}
 	}
+	ranking.status = StatusAthleteRace.RACING.toString();
 	
-	if(ranking.team > 0){
+	//FIXMEMESi c'est une team et que première coureur, il faut ressetter son coéquipier qui part en 2e, sinon on fait rien au coéquipier
+	if(ranking.team > 0 && ranking.endTimeLap1 > 0){
 		//FIXME => doesnt work ??
 		cptAthleteOnFinishLine-=1;
 		var teammate = getTeamMate(ranking);
@@ -268,7 +275,7 @@ function dnsBib(event,_bib){
 	if(ath.status == StatusAthleteRace.READY.toString()){
 		updateStyleBibFlag(_bib,null,event.target);
 		ath.status = StatusAthleteRace.DNS.toString();
-		cptAthleteOnFinishLine+=1;
+		cptAthleteOnStartLine-=1;
 		updateStatusRaceInfosHTML();
 		
 		reloadData();
@@ -278,18 +285,25 @@ function dnsBib(event,_bib){
 	
 };
 function dnfBib(event,_bib){
+	var current = Date.now();
 	event.preventDefault();
 	console.log('dnf bib :'+_bib);
+	
 	var ath = arrayRankingsAthletes.find((obj) => obj.bib === _bib.toString());
 	if(ath.status == StatusAthleteRace.RACING.toString()){
+		
+		listInsertedBib.push(_bib);
+		document.getElementById("input-bib-info").innerHTML = listInsertedBib.join(", ");
 		updateStyleBibFlag(_bib,null,event.target);
 		
 		ath.status = StatusAthleteRace.DNF.toString() ;
 		if(ath.timerlap1.includes('spinner-border')){
-			ath.timerlap1 = '-';
+			ath.endTimeLap1 = current;
+			ath.timerlap1 = calculateTimer(ath.startTimeLap1,ath.endTimeLap1);
 		}
 		if(ath.timerlap2.includes('spinner-border')){
-			ath.timerlap2 = '-';
+			ath.endTimeLap2 = current;
+			ath.timerlap2 = calculateTimer(ath.startTimeLap2,ath.endTimeLap2);
 		}
 		cptAthleteOnFinishLine+=1;
 		updateStatusRaceInfosHTML();
@@ -320,14 +334,16 @@ function startManualBib(event,_bib){
 			if(ranking.cat != 'Fun' && getTeamMate(ranking).status === StatusAthleteRace.RACING.toString()){
 				alert('Départ manuel interdit si le partenaire est toujours en course');
 			}
-			else{
-				//finishEventForTeam(ranking,rankingTeamMate,current);
-				//start timer for team mate startTimeLap2
-				ranking.startTimeLap2 = current;
-				ranking.timerlap2 = runningAnimHtml;
-				ranking.status = StatusAthleteRace.RACING.toString() ;
-				document.getElementById('btn-bib-'+ranking.bib).disabled = false;
-				reloadData();
+			else{	
+				if(ranking.status === StatusAthleteRace.READY.toString() || (ranking.status === StatusAthleteRace.RACING.toString()
+					&& confirm("Réinitialiser le chrono pour ce coureur (dossard "+ranking.bib+") ?"))){
+						//start timer for team mate startTimeLap2
+						ranking.startTimeLap2 = current;
+						ranking.timerlap2 = runningAnimHtml;
+						ranking.status = StatusAthleteRace.RACING.toString() ;
+						document.getElementById('btn-bib-'+ranking.bib).disabled = false;
+						reloadData();
+					}
 			}
 		}
 		else{
@@ -350,6 +366,7 @@ function isBibInMainStartRace(_bib){
 	
 };
 //for fun category, pass 2 same bibnumber for 2 first args
+//FIXME: if undo DNF, style still the same red
 function updateStyleBibFlag(_bib,_bibTeamMate,srcEvent){
 	console.log('class list of btn :'+srcEvent.classList);
 	
@@ -387,6 +404,7 @@ function updateStyleBibFlag(_bib,_bibTeamMate,srcEvent){
 			else{
 				btnBib.className = btnBib.className.replace("btn-success","btn-outline-success");
 				btnBib.className = btnBib.className.replace("btn-outline-success","btn-outline-warning");
+				btnBib.className = btnBib.className.replace("btn-danger","btn-outline-warning");
 			}
 			//re-enable le button bib correspondante
 			btnBib.disabled = false;
@@ -574,35 +592,6 @@ function setStartTimeLap1Athletes(){
 		}
 	}
 	
-	/*
-	var rankingsSolo = arrayRankingsAthletes.filter((obj) => obj.team === 0 );
-	
-	for (var i in rankingsSolo){
-		if(rankingsSolo[i].status != StatusAthleteRace.DNS.toString()){
-			console.log('start race - set timer 1 to bib:'+rankingsSolo[i].bib);
-			
-			rankingsSolo[i].timerlap1 = runningAnimHtml;
-			rankingsSolo[i].startTimeLap1 = currentTime;
-			rankingsSolo[i].status = StatusAthleteRace.RACING.toString() ;
-		}
-	}
-	//TODO : have to be sure that is the first and second part
-	var rankingTeamFirst = arrayRankingsAthletes.filter((obj) => obj.team > 0);
-	
-	for (var i in rankingTeamFirst){
-		
-		var order = getOrderSettingForLapEvent(rankingTeamFirst[i].lapEvent);
-		if(getOrderSettingForLapEvent(rankingTeamFirst[i].lapEvent)==1 && rankingTeamFirst[i].status != StatusAthleteRace.DNS.toString() ){
-			console.log('start race - set timer 1 to bib:'+rankingTeamFirst[i].bib);
-			rankingTeamFirst[i].timerlap1 = runningAnimHtml;
-			rankingTeamFirst[i].startTimeLap1 = currentTime;
-			rankingTeamFirst[i].status = StatusAthleteRace.RACING.toString() ;
-		}
-		else{
-			console.log('start race - bib '+rankingTeamFirst[i].bib+' will start after teammate or with manual start');
-		}
-	}*/
-	
 	reloadData();
 	
 	
@@ -677,7 +666,35 @@ function stopRace(){
 	if(running){
 		stopTimer();
 	}
-}
+};
+function resetRace(){
+	
+	for(var i in arrayRankingsAthletes){
+		var bib = arrayRankingsAthletes[i].bib;
+		if(arrayRankingsAthletes[i].status != StatusAthleteRace.DNS.toString()){
+			arrayRankingsAthletes[i].timerlap1 = '-';
+			arrayRankingsAthletes[i].timerlap2 = '-';
+			arrayRankingsAthletes[i].startTimeLap1 = 0;
+			arrayRankingsAthletes[i].endTimeLap1 = 0;
+			arrayRankingsAthletes[i].startTimeLap2 = 0;
+			arrayRankingsAthletes[i].endTimeLap2 = 0;
+			arrayRankingsAthletes[i].timertotal = '-';
+			arrayRankingsAthletes[i].timersplit = '-';
+			arrayRankingsAthletes[i].status = StatusAthleteRace.READY.toString() ;
+		}
+	}
+	cptAthleteOnFinishLine = 0;
+	updateStatusRaceInfosHTML();
+	listInsertedBib = [];
+	document.getElementById("input-bib-info").innerHTML = "";
+	
+	renderBibButtonsHTML();
+	reloadData();
+	
+
+	resetTimer();
+};
+
 
 
 function startTimer() {

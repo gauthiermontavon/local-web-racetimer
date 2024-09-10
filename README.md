@@ -36,3 +36,10 @@ security.fileuri.strict_origin_policy
 https://agnostic.github.io/LocalDB.js/
 
 
+##User manual
+- Faux départ ? Clic sur bouton Reset
+- Erreur de saisie : Ctrl+Z ou button undo
+- Départ manuel - clic sur button "manuel" de ligne correspondante, seulement si catégorie Fun ou si Partenaire VTT a abandonné (DNF))
+- Stop automatique lorsque tous les dossards ont terminé leur course
+
+
