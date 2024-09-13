@@ -202,27 +202,26 @@ function updateBib(_id){
 	var nextInputIndex = parseInt(event.target.parentNode.id.substring(11))+1;
 	console.log('updateBibnext Index:'+nextInputIndex);
 	
-	var nextInput = document.getElementById('action-row-'+nextInputIndex).getElementsByClassName("form-control")[0];
-	
-	
-		console.log('next input to focus:'+nextInput.id);
-	//action-row-$index$
 	
 	console.log('newBib-'+_id);
 	console.log('updateBib'+document.getElementById('newBib-'+_id).value);
-	
+		
 	athletesColl.find({ _id: _id }, function(results){
-		if(results[0]){
-			console.log('updateBib:'+JSON.stringify(results[0]));
-			results[0].bib = document.getElementById('newBib-'+_id).value;
-			results[0].save();
-		}
+			if(results[0]){
+				console.log('updateBib:'+JSON.stringify(results[0]));
+				results[0].bib = document.getElementById('newBib-'+_id).value;
+				results[0].save();
+			}
 	});
 	
-	//nextInput.focus();
+	reloadData();	
+	if(document.getElementById('action-row-'+nextInputIndex)){
+		console.log('nextinut:'+document.getElementById('action-row-'+nextInputIndex));
+		var nextInput = document.getElementById('action-row-'+nextInputIndex).getElementsByClassName("form-control")[0];
+		
+		document.getElementById(nextInput.id).focus();
+	}
 	
-	reloadData();
-	document.getElementById(nextInput.id).focus();
 };
 
 function getLastCreatedTeam(){

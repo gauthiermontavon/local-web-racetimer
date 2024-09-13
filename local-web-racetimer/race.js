@@ -9,6 +9,7 @@ voir si optimal, ou si il faut directmeent éditer les dataAthletes durant le "L
 CTRL+Z détection for undo bib during race */
 var keysPressed =  [];
 document.addEventListener('keydown', (event) => {
+event.preventDefault();
    keysPressed[event.key] = true;
 
    if (keysPressed['Control'] && event.key == 'z') {
@@ -21,7 +22,7 @@ document.addEventListener('keydown', (event) => {
    if(event.code.substring(0,5) == 'Digit' && running) {
 	   event.preventDefault();
 	   document.getElementById('input-bib').value += event.key;
-	   //console.log('put bib');
+	   console.log('key down BIB !!!!');
    }
    
    if(event.key == 'Enter'){
@@ -182,7 +183,7 @@ function renderBibButtonsHTML(){
 		htmlButtons += '<div class="col"><button disabled id="btn-bib-'+arrayRankingsAthletes[i].bib+'" type="button" style="width:45px;" onclick="clickButtonBib('+arrayRankingsAthletes[i].bib+')"';
 		if(!isBibInMainStartRace(arrayRankingsAthletes[i].bib)){
 			htmlButtons += 'class="btn btn-outline-warning bib-not-main-start" ';
-		}else{
+		}else{11155
 			htmlButtons += 'class="btn btn-outline-warning bib-main-start" ';
 		}
 		htmlButtons += '>'+arrayRankingsAthletes[i].bib+'</button></div>';
@@ -247,10 +248,9 @@ function undoLastBibEntered(){
 		}
 	}
 	ranking.status = StatusAthleteRace.RACING.toString();
-	
-	//FIXMEMESi c'est une team et que première coureur, il faut ressetter son coéquipier qui part en 2e, sinon on fait rien au coéquipier
-	if(ranking.team > 0 && ranking.endTimeLap1 > 0){
-		//FIXME => doesnt work ??
+	//check on lapEvent
+	if(ranking.team > 0 && ranking.lapEvent == "VTT"){
+		
 		cptAthleteOnFinishLine-=1;
 		var teammate = getTeamMate(ranking);
 		teammate.timerlap2 = '-';
