@@ -12,11 +12,10 @@ security.fileuri.strict_origin_policy
 ## TODO
 - Convert project into real POO Javascript
 ### settings
-- settings, discpline mettre message gestion seulement 2 discipline, order 1,2
+- settings, "discipline" - do not allow to register more than 2 items
 - rankings table, dynamic max ranking by category / hardcoded in results.js
-### start list
-- Participant FUN et catégorie FUN
-- on enter bib update
+
+- Implement on enter bib update
 ### race
 - when a athlete finish a lap, reorder his position into table
 - undo click on bib if error from operator
@@ -25,18 +24,16 @@ security.fileuri.strict_origin_policy
 - if running => only play/Stop  reset and bib buttons 
 ### rankings
 - consider settings category to generate rankings by category( currently hardcoded)
-### général
+### General
 - implement message error and info (delete, save,) with toast bootstrap
-- controles validité (dates, nom, discipline intégrité team)
+- validity controls implementation (dates, names, integrity team vs "discpline")
 - export localStorage / import ==> edition
-- check scripts externa (jquery, bootstrap-table, ...)
-
+- check external scripts (jquery, bootstrap-table, ...)
 
 ## Technos
 https://agnostic.github.io/LocalDB.js/
 
-
-##User manual
+## User manual (French version)
 - Faux départ ? Clic sur bouton Reset
 - Erreur de saisie : Ctrl+Z ou button undo
 - Départ manuel - clic sur button "manuel" de ligne correspondante, seulement si catégorie Fun ou si Partenaire VTT a abandonné (DNF))
