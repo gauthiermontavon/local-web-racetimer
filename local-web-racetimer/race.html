@@ -11,7 +11,7 @@
 	 <div class="row align-items-center">
 	  <div class="col-md-12">
 		<button type="button" class="btn btn-outline-danger" onclick="startRace();">Départ</button>
-		<button type="button" class="btn btn-outline-secondary">Reset</button>	
+		<button type="button" class="btn btn-outline-secondary" onclick="if(confirm('Etes-vous sûr?')){resetRace();}">Reset</button>	
 	  </div>
 	</div>
 </div>
@@ -39,6 +39,16 @@
 		</div>
 		<div class="col-md-6" id="grid-bib">
 	
+		</div>
+		<div class="col-md-4">
+			<ul>
+			<li>Faux départ ? Clic sur bouton Reset</li>
+			<li>Erreur de saisie : Ctrl+Z ou button Retour</li>
+			<li>Départ manuel - clic sur button "manuel" de ligne correspondante, seulement si catégorie Fun ou si Partenaire VTT a abandonné (DNF)</li>
+			<li>Abandon ? - clic sur button "DNF" de ligne du concurrent</li>
+			<li>Stop automatique lorsque tous les dossards ont terminé leur course
+			</li>
+			</ul>
 		</div>
 	</div>
 </div>

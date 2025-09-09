@@ -41,20 +41,20 @@ function initCategories(){
 		},
 		{
 			desc: "A",
-			minYear: 1992,
-			maxYear: 2004,
+			minYear: 1993,
+			maxYear: 2005,
 			custom: true		
 		},
 		{
 			desc: "S1",
-			minYear: 1979,
-			maxYear: 1991,
+			minYear: 1980,
+			maxYear: 1992,
 			custom: true			
 		},
 		{
 			desc: "S2",
 			minYear: 1950,
-			maxYear: 1978,
+			maxYear: 1979,
 			custom: true			
 		},
 		{
