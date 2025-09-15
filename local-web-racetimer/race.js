@@ -9,7 +9,7 @@ voir si optimal, ou si il faut directmeent éditer les dataAthletes durant le "L
 CTRL+Z détection for undo bib during race */
 var keysPressed =  [];
 document.addEventListener('keydown', (event) => {
-event.preventDefault();
+//event.preventDefault();
    keysPressed[event.key] = true;
 
    if (keysPressed['Control'] && event.key == 'z') {

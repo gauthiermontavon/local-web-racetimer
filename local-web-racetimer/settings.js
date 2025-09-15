@@ -1,5 +1,11 @@
+var mainSettings = new LDB.Collection('settings');
 var categories = new LDB.Collection('categories');
 var lapsEvent = new LDB.Collection('lapsEvent');
+
+var dataSettings = {};
+mainSettings.find({}, function(results){
+	dataSettings = results;
+});
 
 var dataCat = [];
 categories.find({}, function(results){
@@ -26,8 +32,16 @@ function reloadData(){
 }
 //function must be there if page contains dynamic data (implement interface)
 function populateDataPage(){
+	populateMainSettings();
 	console.log('populate for settings.html, doesnt nothing only to avoid error');
 
+};
+
+function populateMainSettings(){
+
+	if(dataSettings.raceName && dataSettings.raceName != 'undefined'){
+		document.getElementById('inputNameRace').value = dataSettings.raceName;
+	}
 };
 function populateDataCategories(){
 	var table = "" ;
@@ -64,6 +78,22 @@ function populateDataLapsEvent(){
  
 };
 
+
+function saveRaceName(){
+	var formdata = new FormData(document.getElementById("form-main"));
+	var setting = {
+	  nameRace: formdata.getAll("nameRace")	  
+	};
+	
+	mainSettings.save(setting, function(_setting){
+	  console.log(' setting updated:', _setting);
+		mainSettings.find({}, function(results){
+			dataSettings = results;
+			//populateMainSettings();
+		});
+	});
+	
+};
 
 function addCategory(){
 
