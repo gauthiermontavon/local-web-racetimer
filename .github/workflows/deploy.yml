@@ -33,5 +33,5 @@ jobs:
             --exclude='.git' \
             --exclude='.github' \
             ./ \
-            "${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }}:/var/www/myapp/" \
+            "${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }}:/var/www/cigachrono/" \
             -e "ssh -i ~/.ssh/deploy_key"
