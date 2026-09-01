@@ -1,7 +1,3 @@
-
-var dataAthletes = [];
-
-
 var catRankingsVTT = [
 	{"rang":"1"},
 	{"rang":"2"},
@@ -56,18 +52,16 @@ var catRankingsTotal = [
 	{"rang":"15"}
 ];
 
-
+var dataAthletes = [];
 var dataCat = [];
 
 var athletesColl = new LDB.Collection('athletes');
-var lapsRaceColl = new LDB.Collection('lapsRace');
-var lapsEventColl = new LDB.Collection('lapsEvent');
-
 var categories = new LDB.Collection('categories');
+
 var pdfdataCatMap = new Map();
 
 function reloadData(){
-	
+
 	console.log('data initialization for results');
 	athletesColl.find({}, function(results){
 		dataAthletes = results;
@@ -81,16 +75,16 @@ function reloadData(){
 	console.log('vtt rankings after:'+JSON.stringify(catRankingsVTT));
 	$('#table_rankings').bootstrapTable('destroy');
 	$('#table_rankings').bootstrapTable({data:dataAthletes, printStyles: ['https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.2/css/all.min.css']});
-	
+
 	$('#table_rankings_vtt').bootstrapTable('destroy');
 	$('#table_rankings_vtt').bootstrapTable({data:catRankingsVTT, printStyles: ['https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.2/css/all.min.css']});
-	
+
 	$('#table_rankings_cap').bootstrapTable('destroy');
 	$('#table_rankings_cap').bootstrapTable({data:catRankingsCAP, printStyles: ['https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.2/css/all.min.css']});
-	
+
 	$('#table_rankings_total').bootstrapTable('destroy');
 	$('#table_rankings_total').bootstrapTable({data:catRankingsTotal, printStyles: ['https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.2/css/all.min.css']});
-	
+
 	init();
 };
 
@@ -190,17 +184,17 @@ function init(){
 		//Initialise empty arrays for each categories in the map used to displaying in PDF
 		for(var i in dataCat){
 			console.log('CAT DESC:'+dataCat[i].desc);
-			 pdfdataCatMap.set(dataCat[i].desc,new Array());	 
+			 pdfdataCatMap.set(dataCat[i].desc,new Array());
 		}
-		
+
 		console.log("pdfdataCatMap_2:"+JSON.stringify(pdfdataCatMap));
 	});
-	
+
 };
 
 
 function printResults(){
-	
+
 	 var printDate = new Intl.DateTimeFormat('fr-CH', {
     dateStyle: 'long'
   }).format(new Date());
@@ -249,7 +243,7 @@ function printResults(){
 	doc.text("Classement course à pied",130,100);
 
 	doc.table(10, 120, formatDataForRanking("timerlap2"), headersCategories, { autoSize: true, fontSize:6 });
-	
+
 	doc.save("two-by-four.pdf");
 };
 
@@ -270,28 +264,8 @@ function formatDataForRanking(timerlap){
 		}else{
 			pdfdataCatMap.get(dataAthletes[i].cat).push(dataAthletes[i]);
 		}
-	} 
-	
-	/*
-	var data = {
-		rang_A:,
-		cat_A:,
-		chrono_A:,
-		rang_S1:,
-		cat_S1:,
-		chrono_S1:,
-		rang_S2:,
-		cat_S2:,
-		chrono_S2:,
-		rang_D:,
-		cat_D:,
-		chrono_D:,
-		rang_Team:,
-		cat_Team:,
-		chrono_Team:
-	};
-	*/
-	
+	}
+
 	var result = [];
 	var data = {};
 	var processingResult = true;
@@ -315,9 +289,9 @@ function formatDataForRanking(timerlap){
 				data["cat_"+dataCat[i].desc] = " ";
 				data["chrono_"+dataCat[i].desc] = " ";
 			}
-			
+
 		}
-		
+
 		processingResult = somebodyAtRang;
 		//Si personne n'est trouvé. on ajoute pas la ligne et le traitement du classement se termine
 		if(somebodyAtRang){
@@ -325,7 +299,7 @@ function formatDataForRanking(timerlap){
 			result.push(data);
 		}
 		rang++;
-		
+
 	}
 	return result;
 };

@@ -5,7 +5,7 @@ arrayRankingsAthletes : données issues de dataAthletes + données à afficher d
 voir si optimal, ou si il faut directmeent éditer les dataAthletes durant le "LIVE"
 */
 
-/************************************************** 
+/**************************************************
 CTRL+Z détection for undo bib during race */
 var keysPressed =  [];
 document.addEventListener('keydown', (event) => {
@@ -18,13 +18,13 @@ document.addEventListener('keydown', (event) => {
 			undoLastBibEntered();
 	   }
    }
-   
+
    if(event.code.substring(0,5) == 'Digit' && running) {
 	   event.preventDefault();
 	   document.getElementById('input-bib').value += event.key;
 	   console.log('key down BIB !!!!');
    }
-   
+
    if(event.key == 'Enter'){
 		keyPressedBibInput(document.getElementById('input-bib'));
    }
@@ -54,10 +54,11 @@ buttonsAction +=   '<button onclick="startManualBib(event,\'$bib$\');return fals
 
 buttonsAction +=	'</div>';
 
+/**********************************************************/
 
 var dataAthletes = [];
 //displayedArray
-var arrayRankingsAthletes = []; //==> resuts
+var arrayRankingsAthletes = []; //==> live results, in memory only
 
 var athletesColl = new LDB.Collection('athletes');
 var lapsEventColl = new LDB.Collection('lapsEvent');
@@ -70,8 +71,6 @@ var listInsertedBib = [];
 
 
 function reloadData(){
-	
-	
 	$('#table_rankings').bootstrapTable('destroy');
 	$('#table_rankings').bootstrapTable({data:arrayRankingsAthletes});
 };
@@ -85,13 +84,13 @@ function init(){
 		cptAthleteOnStartLine = dataAthletes.length;
 		document.getElementById("info-status-race").innerHTML= "("+cptAthleteOnFinishLine+"/"+cptAthleteOnStartLine+")";
 	});
-	
-	
+
+
 	//TODO: check bib attribution and team completed
-	
+
 	dataAthletes = dataAthletes.sort((a, b) => a.bib - b.bib);
 	for(var i in dataAthletes){
-		
+	  //FIXME : mettre info mainStart ici, et notion de champ caché dans la bootstrapTable ?
 		var rankingAth = {
 			bib:dataAthletes[i].bib,
 			name:dataAthletes[i].name,
@@ -109,64 +108,54 @@ function init(){
 			status:StatusAthleteRace.READY.toString(),
 			action: buttonsAction.replaceAll("$bib$",dataAthletes[i].bib)
 		};
-		
-		arrayRankingsAthletes.push(rankingAth);
 
+		arrayRankingsAthletes.push(rankingAth);
 	}
-	
+
 	console.log('dataAthletes:'+JSON.stringify(dataAthletes));
 	console.log('arrayRankingsAthletes:'+JSON.stringify(arrayRankingsAthletes));
-			
-	//==> bib,name,catégorie,team,discipline,temps VTT, temps CàP, temps total, status, action	
-	
+
+	//==> bib,name,catégorie,team,discipline,temps VTT, temps CàP, temps total, status, action
+
 	//find athlete / order by team, bib
-	var featureEdit = false;
+	var featureEdit = true;
 	$('#table_rankings').on('click-cell.bs.table', function(e,value,row,$element){
 		if(!running && featureEdit){
 			var ranking = arrayRankingsAthletes.find((obj) => obj.bib === $element.bib.toString());
 			console.log('WE WANT EDIT FIELD:'+e+' row:'+row+' value:'+value);
 			console.log('WE WANT EDIT FIELD value:'+JSON.stringify($element));
-			
+
 			if(value=='timerlap1'){
+
 				ranking.timerlap1= '<input id="edit_1" type=\"text\" value=\"'+ranking.timerlap1+'\">';
-				
+
 			}
 			if(value=='timerlap2'){
 				ranking.timerlap1= '<input type=\"text\" value=\"\">';
 			}
-			
-			
-			
+
 			//$('#table_rankings').bootstrapTable('refresh');
 			reloadData();
 			document.getElementById('edit_1').focus();
 		}
-		
+
 	});
-	
-	
+
 	$('#table_rankings').bootstrapTable('destroy');
 	$('#table_rankings').bootstrapTable({data:arrayRankingsAthletes});
-	
-	renderBibButtonsHTML();
-	
-	
-};
 
-//DEPRECATED: SOLO doesnt contain lapEvent anymore...check startlist.js 
-function lapsEventStrToArray(str){
-	return str.split(",");
+	renderBibButtonsHTML();
 };
 
 /**
  render HTML methods
  */
- 
+
 function updateStatusRaceInfosHTML(){
 	document.getElementById("info-status-race").innerHTML= "("+cptAthleteOnFinishLine+"/"+cptAthleteOnStartLine+")";
 	if(cptAthleteOnStartLine==cptAthleteOnFinishLine){
 		stopRace();
-	}		
+	}
 }
 function renderBibButtonsHTML(){
 	arrayRankingsAthletes = arrayRankingsAthletes.sort((a, b) => a.bib - b.bib);
@@ -195,7 +184,7 @@ function renderBibButtonsHTML(){
 		}
 		console.log(arrayRankingsAthletes[i].bib+' in main start?:'+isBibInMainStartRace(arrayRankingsAthletes[i].bib));
 	}
-	
+
 
 	//console.log('render bib grid'+htmlButtons);
 	document.getElementById('grid-bib').innerHTML=htmlButtons;
@@ -203,14 +192,14 @@ function renderBibButtonsHTML(){
 
 function keyPressedBibInput(ele) {
     if(event.key === 'Enter') {
-		
+
 		clickButtonBib(ele.value);
 		ele.value = '';
     }
 };
 
 function clickButtonBib(_bib){
-	
+
 	if(document.getElementById('btn-bib-'+_bib) && !document.getElementById('btn-bib-'+_bib).disabled){
 		console.log('click  bib n°'+_bib);
 		listInsertedBib.push(_bib);
@@ -237,7 +226,7 @@ function undoLastBibEntered(){
 		cptAthleteOnFinishLine-=1;
 	}
 	else if (ranking.endTimeLap1 > 0){
-		
+
 		ranking.timerlap1 = runningAnimHtml;
 		ranking.endTimeLap1 = 0;
 		ranking.timerlap2 = '-';
@@ -250,17 +239,17 @@ function undoLastBibEntered(){
 	ranking.status = StatusAthleteRace.RACING.toString();
 	//check on lapEvent
 	if(ranking.team > 0 && ranking.lapEvent == "VTT"){
-		
+
 		cptAthleteOnFinishLine-=1;
 		var teammate = getTeamMate(ranking);
 		teammate.timerlap2 = '-';
 		teammate.startTimeLap2 = 0;
 		teammate.timersplit = '';
 		teammate.status = StatusAthleteRace.READY.toString();
-			
-		updateStyleBibFlag(_bib,teammate.bib,document.getElementById('undo-bib'));	
+
+		updateStyleBibFlag(_bib,teammate.bib,document.getElementById('undo-bib'));
 	}else{
-		updateStyleBibFlag(_bib,null,document.getElementById('undo-bib'));	
+		updateStyleBibFlag(_bib,null,document.getElementById('undo-bib'));
 	}
 	updateStatusRaceInfosHTML();
 	reloadData();
@@ -277,25 +266,25 @@ function dnsBib(event,_bib){
 		ath.status = StatusAthleteRace.DNS.toString();
 		cptAthleteOnStartLine-=1;
 		updateStatusRaceInfosHTML();
-		
+
 		reloadData();
 	}else{
 		alert('Seul un athlète pas encore parti peut être déclaré non partant');
 	}
-	
+
 };
 function dnfBib(event,_bib){
 	var current = Date.now();
 	event.preventDefault();
 	console.log('dnf bib :'+_bib);
-	
+
 	var ath = arrayRankingsAthletes.find((obj) => obj.bib === _bib.toString());
 	if(ath.status == StatusAthleteRace.RACING.toString()){
-		
+
 		listInsertedBib.push(_bib);
 		document.getElementById("input-bib-info").innerHTML = listInsertedBib.join(", ");
 		updateStyleBibFlag(_bib,null,event.target);
-		
+
 		ath.status = StatusAthleteRace.DNF.toString() ;
 		if(ath.timerlap1.includes('spinner-border')){
 			ath.endTimeLap1 = current;
@@ -318,10 +307,10 @@ function startManualBib(event,_bib){
 	console.log('manual start');
 	var current = Date.now();
 	var ranking = arrayRankingsAthletes.find((obj) => obj.bib === _bib.toString());
-	
+
 	console.log('ranking found for bib:'+JSON.stringify(ranking));
-	
-	
+
+
 	//if ranking is a solo ou différent de Fun
 	if(ranking.team === 0 && ranking.cat != 'Fun'){
 		alert('Départ manuel autorisé seulement pour une équipe catégorie Fun - coureur à pied');
@@ -334,7 +323,7 @@ function startManualBib(event,_bib){
 			if(ranking.cat != 'Fun' && getTeamMate(ranking).status === StatusAthleteRace.RACING.toString()){
 				alert('Départ manuel interdit si le partenaire est toujours en course');
 			}
-			else{	
+			else{
 				if(ranking.status === StatusAthleteRace.READY.toString() || (ranking.status === StatusAthleteRace.RACING.toString()
 					&& confirm("Réinitialiser le chrono pour ce coureur (dossard "+ranking.bib+") ?"))){
 						//start timer for team mate startTimeLap2
@@ -350,7 +339,7 @@ function startManualBib(event,_bib){
 			alert('Départ manuel autorisé seulement pour une équipe ou catégorie Fun - coureur à pied');
 		}
 	}
-	
+
 };
 
 function isBibInMainStartRace(_bib){
@@ -363,18 +352,18 @@ function isBibInMainStartRace(_bib){
 	}else{
 		return ranking.lapEvent.includes(descFirstLapEvent);
 	}
-	
+
 };
 //for fun category, pass 2 same bibnumber for 2 first args
 //FIXME: if undo DNF, style still the same red
 function updateStyleBibFlag(_bib,_bibTeamMate,srcEvent){
 	console.log('class list of btn :'+srcEvent.classList);
-	
+
 	var btnBib = document.getElementById('btn-bib-'+_bib);
 	var btnBibTeamMate = document.getElementById('btn-bib-'+_bibTeamMate);
 	console.log('update style for bib main : '+'btn-bib-'+_bib);
 	console.log('update style for bib main : '+'btn-bib-'+_bibTeamMate);
-	
+
 	switch (srcEvent.id.substring(0,7)){
 		case 'btn-bib':
 			console.log('click on bib');
@@ -386,13 +375,13 @@ function updateStyleBibFlag(_bib,_bibTeamMate,srcEvent){
 			else{
 				srcEvent.className = srcEvent.className.replace("btn-outline-success","btn-success");
 				srcEvent.className = srcEvent.className.replace("btn-outline-warning","btn-outline-success");
-				
+
 			}
 			if(srcEvent.classList.contains('btn-success')){
 					srcEvent.disabled = true;
 			}
 			break;
-		case 'undo-bi':	
+		case 'undo-bi':
 			if(_bibTeamMate){
 				btnBib.className = btnBib.className.replace("btn-success","btn-outline-warning");
 				//si team
@@ -408,12 +397,12 @@ function updateStyleBibFlag(_bib,_bibTeamMate,srcEvent){
 			}
 			//re-enable le button bib correspondante
 			btnBib.disabled = false;
-			
-		
+
+
 		break;
 		case 'btn-dns':
 			console.log('click on dns');
-			
+
 				btnBib.className = btnBib.className.replace("btn-outline-warning","btn-secondary");
 				btnBib.className = btnBib.className.replace("btn-outline-success","btn-secondary");
 				btnBib.disabled = true;
@@ -424,26 +413,26 @@ function updateStyleBibFlag(_bib,_bibTeamMate,srcEvent){
 				btnBib.disabled = true;
 			break;
 	}
-	
+
 };
 function finishLapForBib(_bib){
 	var current = Date.now();
 	// updateClass: btn-outline-warning -> -=> btn-outline-success -> btn-success/disable
-	
+
 	var btnBib = document.getElementById('btn-bib-'+_bib);
 
 	var ranking = arrayRankingsAthletes.find((obj) => obj.bib === _bib.toString());
-	
+
 	console.log('ranking found for bib:'+JSON.stringify(ranking));
-	
-	
+
+
 	//if ranking is a solo
 	if(ranking.team === 0 && ranking.cat !== 'Fun'){
 		updateStyleBibFlag(_bib,null,btnBib);
 		console.log('finish solo');
-		
+
 		if(ranking.endTimeLap1 == 0){
-			
+
 			ranking.endTimeLap1 = current;
 			ranking.timersplit = current;
 			ranking.timerlap1 = calculateTimer(ranking.startTimeLap1,ranking.endTimeLap1);
@@ -451,35 +440,33 @@ function finishLapForBib(_bib){
 			ranking.timerlap2 = runningAnimHtml;
 		}
 		else{
-			
+
 			finishEventForBib(ranking,current);
 		}
-		
+
 	}else if(ranking.cat === 'Fun'){
 			updateStyleBibFlag(_bib,_bib,btnBib);
 			if(ranking.startTimeLap1 != 0){
 				ranking.endTimeLap1 = current;
 				ranking.timersplit = current;
 				ranking.timerlap1 = calculateTimer(ranking.startTimeLap1,ranking.endTimeLap1);
-				
+
 			}else if (ranking.startTimeLap2 != 0){
 				ranking.endTimeLap2 = current;
 				ranking.timersplit = current;
 				ranking.timerlap2 = calculateTimer(ranking.startTimeLap2,ranking.endTimeLap2);
 			}
 			finishEventForBib(ranking,current);
-			
+
 	}
 	//if ranking is a team mate
 	else{
 		console.log('finish team mate or fun');
-		
+
 		var rankingTeamMate = arrayRankingsAthletes.find((obj) => (obj.team === ranking.team) && (obj.bib != _bib.toString()));
 		console.log('found team mate :'+JSON.stringify(rankingTeamMate));
 		updateStyleBibFlag(_bib,rankingTeamMate.bib,btnBib);
-		
-		//var lapEventArray = lapsEventStrToArray(ranking.lapEvent);
-		//var orderSettingLap = getOrderSettingForLapEvent(lapEventArray[0]);
+
 		var orderSettingLap = getOrderSettingForLapEvent(ranking.lapEvent);
 		console.log('ordre for lap to finish:'+orderSettingLap);
 		if(orderSettingLap==1){
@@ -489,7 +476,7 @@ function finishLapForBib(_bib){
 			ranking.status = StatusAthleteRace.FINISHED.toString() ;
 			cptAthleteOnFinishLine+=1;
 			updateStatusRaceInfosHTML();
-			
+
 			//start timer for team mate startTimeLap2
 			//si il n'est pas ready, il ne faut pas le démarrer, peut etre déja parti car manual start ?
 			if(rankingTeamMate.status === StatusAthleteRace.READY.toString()){
@@ -505,20 +492,20 @@ function finishLapForBib(_bib){
 				ranking.timertotal = calculateTimer(ranking.startTimeLap1,rankingTeamMate.endTimeLap2);
 				rankingTeamMate.timertotal = ranking.timertotal;
 			}
-			
+
 		}
 		if(orderSettingLap==2){
 			finishEventForTeam(ranking,rankingTeamMate,current);
 		}
-		
-	
+
+
 	}
 	//TODO order by  timertotal if defined , else timer2 if defined, else timer1
 	console.log('-------------------------------------------------->>>>>>>>>>>>>>>>>> FINISH LAP for ranking');
-	
+
 	reloadData();
 	$('#table_rankings').bootstrapTable('sortBy', {field: 'timersplit', sortOrder: 'desc'});
-	
+
 };
 
 
@@ -549,14 +536,14 @@ function finishEventForTeam(_objRankAth,_objRankTeamMate, currentTime){
 function getLapEventDescForOrderSettings(_order){
 	//FIXME: find({ desc:_desc} doesnt work
 	var returnValue = '';
-	lapsEventColl.find({}, function(results){	
+	lapsEventColl.find({}, function(results){
 		for(var i in results){
 			if(parseInt(results[i].order) === _order){
 				returnValue = results[i].desc.toString();
 			}
 		}
 	});
-	
+
 	return returnValue;
 };
 
@@ -568,21 +555,21 @@ function getOrderSettingForLapEvent(_desc){
 	//FIXME: find({ desc:_desc} doesnt work
 	var returnValue = 0;
 	lapsEventColl.find({}, function(results){
-		
+
 		for(var i in results){
-		
+
 			if(results[i].desc.toString() === _desc.toString()){
 				returnValue = parseInt(results[i].order);
 			}
 		}
 	});
-	
+
 	return returnValue;
 };
 //TODO: gère aussi les catégories Fun càp
 function setStartTimeLap1Athletes(){
 	var currentTime = Date.now();
-	
+
 	for(var i in arrayRankingsAthletes){
 		var bib = arrayRankingsAthletes[i].bib;
 		if(isBibInMainStartRace(bib) && arrayRankingsAthletes[i].status != StatusAthleteRace.DNS.toString()){
@@ -591,20 +578,20 @@ function setStartTimeLap1Athletes(){
 			arrayRankingsAthletes[i].status = StatusAthleteRace.RACING.toString() ;
 		}
 	}
-	
+
 	reloadData();
-	
-	
+
+
 };
 
 
 function saveResults(){
-	
+
 	athletesColl.find({}, function(results){
 		console.log('dataAthletes in DB before save :'+JSON.stringify(results));
 	});
-	
-	
+
+
 	//pour chaque ath+ses données LIVE race, classé par bib
 	arrayRankingsAthletes = arrayRankingsAthletes.sort((a, b) => a.bib - b.bib);
 	for(var i in arrayRankingsAthletes){
@@ -620,15 +607,15 @@ function saveResults(){
 	}
 	athletesColl.find({}, function(results){
 		console.log('dataAthletes in DB after save :'+JSON.stringify(results));
-	
+
 	});
-	
-	
+
+
 
 };
-
+//-----------------------------------------------------------------
 //TIMER FEATURES
-
+//-------------------------------------------------------------------
 var timer;
 var mainStartTime;
 var running = false;
@@ -641,15 +628,15 @@ function startRace(){
 	document.getElementById("input-bib").disabled = false;
 	document.getElementById("undo-bib").disabled = false;
 	document.getElementById("input-bib").focus();
-	
+
 	var bibs = document.getElementById("grid-bib").getElementsByClassName("bib-main-start");
 	for(var i=0; i<bibs.length;i++){
 		bibs[i].disabled = false;
 	}
-	
+
 	if(!running){
 		startTimer();
-	
+
 		setStartTimeLap1Athletes();
 	}
 };
@@ -668,7 +655,7 @@ function stopRace(){
 	}
 };
 function resetRace(){
-	
+
 	for(var i in arrayRankingsAthletes){
 		var bib = arrayRankingsAthletes[i].bib;
 		if(arrayRankingsAthletes[i].status != StatusAthleteRace.DNS.toString()){
@@ -687,15 +674,13 @@ function resetRace(){
 	updateStatusRaceInfosHTML();
 	listInsertedBib = [];
 	document.getElementById("input-bib-info").innerHTML = "";
-	
+
 	renderBibButtonsHTML();
 	reloadData();
-	
+
 
 	resetTimer();
 };
-
-
 
 function startTimer() {
       if (!running) {
@@ -709,7 +694,7 @@ function stopTimer() {
       if (running) {
         clearInterval(timer);
         running = false;
-       
+
       }
 };
 function resetTimer() {
@@ -732,25 +717,21 @@ function calculateTimer(start,end){
 	var hours = Math.floor(resultTime / 3600000);
     var minutes = Math.floor((resultTime % 3600000) / 60000);
     var seconds = Math.floor((resultTime % 60000) / 1000);
-	
+
 	var formattedTime = formatTime(hours) + ':' + formatTime(minutes) + ':' + formatTime(seconds);
 	return formattedTime;
-	
-}
 
+}
 function calculateTimerAddition(time1,time2){
-	
+
 	var resultTime = chronoFormatToEpoch(time1)+chronoFormatToEpoch(time2);
 	var hours = Math.floor(resultTime / 3600000);
     var minutes = Math.floor((resultTime % 3600000) / 60000);
     var seconds = Math.floor((resultTime % 60000) / 1000);
-	
+
 	var formattedTime = formatTime(hours) + ':' + formatTime(minutes) + ':' + formatTime(seconds);
 	return formattedTime;
 }
-
-
-
 
 function formatTime(time) {
 	return time < 10 ? '0' + time : time;

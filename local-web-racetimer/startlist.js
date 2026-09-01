@@ -1,10 +1,12 @@
-var data = [];
+var dataAthletes = [];
 var dataTeam = [];
+var dataSettings = [];
 var dataCat = [];
 var dataLaps = [];
 var dataTeams = [];
 var athletesColl = new LDB.Collection('athletes');
 var teams = new LDB.Collection('teams');
+var mainSettings = new LDB.Collection('settings');
 var categories = new LDB.Collection('categories');
 var lapsEvent = new LDB.Collection('lapsEvent');
 
@@ -19,21 +21,27 @@ function reloadData(){
 
 
 	athletesColl.find({}, function(results){
-		data = results;
+		dataAthletes = results;
 	});
-	
+
 	teams.find({},function(results){
 		dataTeams = results;
+	});
+
+	mainSettings.find({}, function(results){
+	  dataSettings = results;
 	});
 
 	categories.find({}, function(results){
 		dataCat = results;
 	});
-	
+
 	lapsEvent.find({}, function(results){
 		dataLaps = results;
 	});
-	
+	console.log(' --------------');
+	console.log("dataSettings:",dataSettings)
+	document.getElementById("label_raceName").innerHTML = dataSettings.raceName;
 	populateDataPage();
 }
 /**
@@ -42,18 +50,18 @@ function must be there if page contains dynamic data (implement interface)
 function populateDataPage(){
 	console.log('populate for startlist.html');
 
-	for(var i in data){
-		data[i].action =  buttonsAction.replaceAll("$index$",i).replaceAll("$id$",data[i]._id);
+	for(var i in dataAthletes){
+		dataAthletes[i].action =  buttonsAction.replaceAll("$index$",i).replaceAll("$id$",dataAthletes[i]._id);
 
 	}
 
 	$('#table_startlist').bootstrapTable('destroy');
-	$('#table_startlist').bootstrapTable({data:data});
-	
+	$('#table_startlist').bootstrapTable({data:dataAthletes});
+
 	//document.getElementById("startList-data").innerHTML = table;
-	
+
 	renderOptionsForLapsEvent();
- 
+
 };
 /**
  render HTML methods
@@ -63,7 +71,7 @@ function renderOptionsForLapsEvent(){
 	for (var i in dataLaps){
 		options += '<option value="'+dataLaps[i].desc+'">'+dataLaps[i].desc+'</option>';
 	}
-	
+
 	document.getElementById('inputLap1').innerHTML=options;
 	document.getElementById('inputLap2').innerHTML=options;
 	document.getElementById('inputLapFun').innerHTML=options;
@@ -84,14 +92,14 @@ function addAthleteSolo(){
 		timerlap2:'-',
 		timertotal:'-',
 		ranked:'true'
-	  
+
 	};
 
 	athletesColl.save(athlete, function(_athlete){
 	  console.log('New athlete:', _athlete);
 	  reloadData();
 	  clearAllFormInputs("form-solo");
-	
+
 	});
 };
 function addAthleteFun(){
@@ -107,32 +115,32 @@ function addAthleteFun(){
 		timerlap2:'-',
 		timertotal:'-',
 		ranked:'true'
-	  
+
 	};
 
 	athletesColl.save(athlete, function(_athlete){
 	  console.log('New athlete:', _athlete);
 	  reloadData();
 	  clearAllFormInputs("form-fun");
-	
+
 	});
 };
 
 function addTeam(){
 	var formdata = new FormData(document.getElementById("form-team"));
-	
+
 	console.log('lastteam id:'+getLastCreatedTeam().pubId);
-	
-	
+
+
 	var team = {
 		pubId : getLastCreatedTeam().pubId+1,
 		name : 'NOT_USED'
 	};
-	
+
 	teams.save(team, function(_team){
 		console.log('team created:'+ JSON.stringify(team));
 	});
-	
+
 
 	var team_athletes = [
 		{
@@ -145,7 +153,7 @@ function addTeam(){
 			timerlap1:'-',
 			timerlap2:'-',
 			timertotal:'-',
-			ranked:'true'  
+			ranked:'true'
 		},
 		{
 			bib:0,
@@ -169,9 +177,9 @@ function addTeam(){
 };
 
 function deleteAthlete(_id){
-	
+
 	console.log('delete athlete with id:'+_id);
-	
+
 	var teamMember = false;
 
 	athletesColl.find({ _id: _id }, function(items){
@@ -182,30 +190,30 @@ function deleteAthlete(_id){
 			items[i].delete();
 		}
 	});
-	
+
 	if (teamMember) {
 		console.log('TODO: delete team member and team + put a message box to notice user');
 	}
-	
+
 	athletesColl.find({ }, function(items){
 			data = items;
 	});
 
 	reloadData();
-	
+
 };
 
 function updateBib(_id){
-	
+
 	console.log('updateBib index current:'+event.target.parentNode.id.substring(11));
 	//event.target.parentNode.id
 	var nextInputIndex = parseInt(event.target.parentNode.id.substring(11))+1;
 	console.log('updateBibnext Index:'+nextInputIndex);
-	
-	
+
+
 	console.log('newBib-'+_id);
 	console.log('updateBib'+document.getElementById('newBib-'+_id).value);
-		
+
 	athletesColl.find({ _id: _id }, function(results){
 			if(results[0]){
 				console.log('updateBib:'+JSON.stringify(results[0]));
@@ -213,19 +221,19 @@ function updateBib(_id){
 				results[0].save();
 			}
 	});
-	
-	reloadData();	
+
+	reloadData();
 	if(document.getElementById('action-row-'+nextInputIndex)){
 		console.log('nextinut:'+document.getElementById('action-row-'+nextInputIndex));
 		var nextInput = document.getElementById('action-row-'+nextInputIndex).getElementsByClassName("form-control")[0];
-		
+
 		document.getElementById(nextInput.id).focus();
 	}
-	
+
 };
 
 function getLastCreatedTeam(){
-	
+
 	var maxPublicId = 0;
 	var lastTeam = {
 		pubId : 0,

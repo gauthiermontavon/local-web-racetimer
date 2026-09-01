@@ -45,46 +45,48 @@ function populateMainSettings(){
 };
 function populateDataCategories(){
 	var table = "" ;
- 
+
 		for(var i in dataCat){
-			
-			
+
+
 			console.log('category id db:'+dataCat[i]._id);
 			table += "<tr>";
-			table += "<td>"+i+"</td>" 
-					+ "<td>" + dataCat[i].desc +"</td>" 
-					+ "<td>" + dataCat[i].minYear +"</td>" 
+			table += "<td>"+i+"</td>"
+					+ "<td>" + dataCat[i].desc +"</td>"
+					+ "<td>" + dataCat[i].minYear +"</td>"
 					+ "<td>" + dataCat[i].maxYear +"</td>"
 					+ "<td>" + deleteCatButton.replaceAll("$id$",dataCat[i]._id)+"</td>";
 			table += "</tr>";
 		}
- 
+
 	document.getElementById("catList-data").innerHTML = table;
- 
+
 };
 function populateDataLapsEvent(){
 	var table = "" ;
- 
+
 		for(var i in dataLap){
 			table += "<tr>";
-			table += "<td>"+i+"</td>" 
-					+ "<td>" + dataLap[i].desc +"</td>" 
+			table += "<td>"+i+"</td>"
+					+ "<td>" + dataLap[i].desc +"</td>"
 					+ "<td>" + dataLap[i].distance +"</td>"
-					+ "<td>" + dataLap[i].order +"</td>" 					
+					+ "<td>" + dataLap[i].order +"</td>"
 					+ "<td>" + lapButtons.replaceAll("$id$",dataLap[i]._id)+"</td>";
 			table += "</tr>";
 		}
 	document.getElementById("lapEventList-data").innerHTML = table;
- 
+
 };
 
 
 function saveRaceName(){
 	var formdata = new FormData(document.getElementById("form-main"));
 	var setting = {
-	  nameRace: formdata.getAll("nameRace")	  
+	  nameRace: formdata.getAll("nameRace")
 	};
-	
+
+	//FIXME: update instead of add a new element eachtime
+	//mainSettings.update({nameRace}, function(_setting){});
 	mainSettings.save(setting, function(_setting){
 	  console.log(' setting updated:', _setting);
 		mainSettings.find({}, function(results){
@@ -92,7 +94,7 @@ function saveRaceName(){
 			//populateMainSettings();
 		});
 	});
-	
+
 };
 
 function addCategory(){
@@ -103,7 +105,7 @@ function addCategory(){
 	  minYear: formdata.getAll("yearMin"),
 	  maxYear: formdata.getAll("yearMax"),
 	  custom : false
-	  
+
 	};
 
 	categories.save(category, function(_category){
@@ -130,17 +132,17 @@ function deleteCategory(_id){
 
 	populateDataCategories();
 
-	
+
 };
 
 function addLapEvent(){
 
 	var formdata = new FormData(document.getElementById("form-lapEvent"));
 	var lapEvent = {
-		
+
 	  desc: formdata.getAll("description"),
 	  order:  formdata.getAll("order"),
-	  distance: formdata.getAll("distance") 
+	  distance: formdata.getAll("distance")
 	};
 
 	lapsEvent.save(lapEvent, function(_lap){
@@ -166,7 +168,7 @@ function deleteLapEvent(_id){
 
 		populateDataLapsEvent();
 	});
-	
+
 };
 
 function updateOrderLapEvent(_id){
@@ -178,11 +180,11 @@ function updateOrderLapEvent(_id){
 			items[0].save();
 		}
 	});
-	
+
 	lapsEvent.find({ }, function(items){
 			dataLap = items;
 	});
 	populateDataLapsEvent();
-	
+
 	reloadData();
 };

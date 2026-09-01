@@ -8,7 +8,11 @@ and set it from true to false by double-clicking it.
 https://support.mozilla.org/fr/kb/configurer-firefox-avec-autoconfig
 
 security.fileuri.strict_origin_policy
-
+## NEXT
+- Edit race rankings before save to results (race view)
+- Once race is initialized, only admin can close race (unable to leave race view or confirm alert)(race view)
+- Proper navigation to display final results (results view)
+- Publish feature to make final results online (et not only in local storage of browser)
 ## TODO
 - Convert project into real POO Javascript
 ### settings
@@ -38,5 +42,3 @@ https://agnostic.github.io/LocalDB.js/
 - Erreur de saisie : Ctrl+Z ou button undo
 - Départ manuel - clic sur button "manuel" de ligne correspondante, seulement si catégorie Fun ou si Partenaire VTT a abandonné (DNF))
 - Stop automatique lorsque tous les dossards ont terminé leur course
-
-

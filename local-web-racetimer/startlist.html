@@ -1,11 +1,11 @@
 
       <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-        <h1 class="h2">Cigathlon 2025</h1>
+        <h1 class="h2" id="label_raceName">Cigathlon 2025</h1>
       </div>
-	  
+
 	<h2>Enregistrement des participants</h2>
 	<p class="d-inline-flex gap-1">
- 
+
 		<button class="btn btn-outline-primary" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolo" aria-expanded="false" aria-controls="collapseExample">
 			Participant SOLO
 		</button>
@@ -15,7 +15,7 @@
 		<button class="btn btn-outline-primary" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTeam" aria-expanded="false" aria-controls="collapseExample">
 			Equipe
 		</button>
-  
+
 	</p>
 	<div class="collapse" id="collapseSolo">
 	  <div class="card card-body">
@@ -28,18 +28,18 @@
 				<label for="inputYear" class="form-label">Année</label>
 				<input type="text" class="form-control" id="inputYear" name="year">
 			</div>
-	
+
 			<div class="col-md-2">
 				<label for="btnSave" class="form-label">&nbsp;</label>
 				<button class="btn btn-primary form-control" id="btnSave" onclick="addAthleteSolo();return false;">Enregistrer</button>
-			
+
 			</div>
-		
+
 		</form>
 
 	  </div>
 	</div>
-	
+
 	<div class="collapse" id="collapseFun">
 	  <div class="card card-body">
 		<form class="row g-3" id="form-fun">
@@ -47,24 +47,24 @@
 				<label for="inputName3" class="form-label">NOM Prénom</label>
 				<input type="text" class="form-control" id="inputName" name="fullname">
 			</div>
-			
+
 			<div class="col-md-2">
 				<label for="inputLapFun" class="form-label">Discipline</label>
 				<!--<input type="text" class="form-control" id="inputLap1" name="lap1">-->
 				<select class="form-select" aria-label="Default select example" id="inputLapFun" name="lapFun">
 				</select>
-	
+
 			</div>
 			<div class="col-md-2">
 				<label for="btnSave" class="form-label">&nbsp;</label>
 				<button class="btn btn-primary form-control" id="btnSave2" onclick="addAthleteFun();return false;">Enregistrer</button>
-			
+
 			</div>
 		</form>
 
 	  </div>
 	</div>
-	
+
 	<div class="collapse" id="collapseTeam">
 	  <div class="card card-body">
 		<form class="row g-3" id="form-team">
@@ -81,8 +81,8 @@
 				<!--<input type="text" class="form-control" id="inputLap1" name="lap1">-->
 				<select class="form-select" aria-label="Default select example" id="inputLap1" name="lap1">
 				</select>
-				
-				
+
+
 			</div>
 			<div class="col-md-4"></div>
 			<div class="col-md-4">
@@ -98,18 +98,18 @@
 				<select class="form-select" aria-label="Default select example" id="inputLap2" name="lap2">
 				</select>
 			</div>
-	
+
 			<div class="col-md-2">
 				<label for="btnSave" class="form-label">&nbsp;</label>
 				<button class="btn btn-primary form-control" id="btnSave3" onclick="addTeam();return false;">Enregistrer</button>
-			
+
 			</div>
-		
+
 		</form>
 
 	  </div>
 	</div>
-	
+
       <h2>Liste de départ</h2>
       <div class="table-responsive small">
         <table class="table table-striped table-sm" id="table_startlist">
@@ -126,10 +126,7 @@
             </tr>
           </thead>
           <tbody id="startList-data">
-           
+
           </tbody>
         </table>
       </div>
-	  
-	  
-	 

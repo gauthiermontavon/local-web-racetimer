@@ -16,7 +16,7 @@ function clearAllFormInputs(idFormElement){
 function setupApplication(){
  //TODO: init discipline
  //TODO: init catégorie : team + function
- 
+
 	console.log('setup App...');
 	initCategories();
 	console.log('[SETUP] : Categories initialization done...');
@@ -37,50 +37,50 @@ function initCategories(){
 			desc: "Fun",
 			minYear: 1900,
 			maxYear: 2100,
-			custom: false		
+			custom: false
 		},
 		{
 			desc: "A",
-			minYear: 1993,
-			maxYear: 2005,
-			custom: true		
+			minYear: 1994,
+			maxYear: 2006,
+			custom: true
 		},
 		{
 			desc: "S1",
-			minYear: 1980,
-			maxYear: 1992,
-			custom: true			
+			minYear: 1981,
+			maxYear: 1993,
+			custom: true
 		},
 		{
 			desc: "S2",
 			minYear: 1950,
-			maxYear: 1979,
-			custom: true			
+			maxYear: 1980,
+			custom: true
 		},
 		{
 			desc: "D",
 			minYear: 1900,
 			maxYear: 2100,
-			custom:false		
+			custom:false
 		},
-		
-	
+
+
 	];
 
 	categories.save(items, function(_items){
-		 console.log('Default categories created:', _items);	
+		 console.log('Default categories created:', _items);
 	});
 };
 
 function initLapEvents(){
 	lapsEvent.drop();
 	var items = [
-		{	
+		{
 			desc: 'VTT',
 			order:  1,
 			distance: 15
 		},
-		{	
+		{
 			desc: 'Course à pied',
 			order:  2,
 			distance: 5
@@ -88,7 +88,7 @@ function initLapEvents(){
 	];
 
 	lapsEvent.save(items, function(_items){
-	  console.log('Default events created:', _items);	
+	  console.log('Default events created:', _items);
 	});
 };
 
