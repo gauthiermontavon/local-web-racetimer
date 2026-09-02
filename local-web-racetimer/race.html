@@ -1,5 +1,7 @@
 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-	<h2>Cigathlon 2025 - Course</h2> <button id="race-init-btn" type="button" class="btn btn-outline-success" onclick="init();">Initialiser</button>
+	<h2>Cigathlon 2025 - Course</h2>
+	    <button id="race-init-btn" type="button" class="btn btn-outline-success" onclick="init();">Initialiser</button>
+
 </div>
 <!--<div class="d-flex justify-content-center flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">-->
 <div class="container text-center">
@@ -11,7 +13,7 @@
 	 <div class="row align-items-center">
 	  <div class="col-md-12">
 		<button type="button" class="btn btn-outline-danger" onclick="startRace();">Départ</button>
-		<button type="button" class="btn btn-outline-secondary" onclick="if(confirm('Etes-vous sûr?')){resetRace();}">Reset</button>	
+		<button type="button" class="btn btn-outline-secondary" onclick="if(confirm('Etes-vous sûr?')){resetRace();}">Reset</button>
 	  </div>
 	</div>
 </div>
@@ -31,14 +33,14 @@
 					</svg>
                   <span class="visually-hidden">Button</span>
                 </button>
-				
+
 			</div>
 			<div id="input-bib-info" style="margin-top:10px;">
-				
+
 			</div>
 		</div>
 		<div class="col-md-6" id="grid-bib">
-	
+
 		</div>
 		<div class="col-md-4">
 			<ul>
@@ -54,6 +56,7 @@
 </div>
 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 ">
 	<h2>Classement</h2>
+		<button id="race-lock-btn" type="button" class="btn btn-outline-success" disabled onclick="lockResultsRace();">Verrouiller</button>
 </div>
 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 ">
 	<div class="table-responsive small">
@@ -74,9 +77,8 @@
             </tr>
           </thead>
           <tbody id="rankings-data">
-           
+
           </tbody>
         </table>
       </div>
 </div>
-

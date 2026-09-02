@@ -119,27 +119,46 @@ function init(){
 
 	//find athlete / order by team, bib
 	var featureEdit = true;
-	$('#table_rankings').on('click-cell.bs.table', function(e,value,row,$element){
-		if(!running && featureEdit){
-			var ranking = arrayRankingsAthletes.find((obj) => obj.bib === $element.bib.toString());
-			console.log('WE WANT EDIT FIELD:'+e+' row:'+row+' value:'+value);
-			console.log('WE WANT EDIT FIELD value:'+JSON.stringify($element));
+  $('#table_rankings').on('click-cell.bs.table', function (e, value, row, $element) {
+    if (!running && featureEdit) {
+      var ranking = arrayRankingsAthletes.find((obj) => obj.bib === $element.bib.toString());
 
-			if(value=='timerlap1'){
+      console.log('WE WANT EDIT FIELD value:' + JSON.stringify($element));
+      console.log('value:' + value);
+      if (value == 'timerlap1') {
+        var $cell = $($element);
+        var oldValue = $cell.text().trim();
 
-				ranking.timerlap1= '<input id="edit_1" type=\"text\" value=\"'+ranking.timerlap1+'\">';
+        $cell.html('<input type="text" class="form-control" value="' + oldValue + '">');
+        var $input = $cell.find('input');
+        console.log('INPUT INSERTION £!!');
+        $input.focus();
 
-			}
-			if(value=='timerlap2'){
-				ranking.timerlap1= '<input type=\"text\" value=\"\">';
-			}
+        // Quand on quitte le champ
+        $input.on('blur', function () {
+          var newValue = $(this).val();
+          $cell.text(newValue);
+          // Ici tu peux éventuellement sauvegarder la nouvelle valeur
+          console.log('Nouvelle valeur :', newValue);
+        });
 
-			//$('#table_rankings').bootstrapTable('refresh');
-			reloadData();
-			document.getElementById('edit_1').focus();
-		}
+        // Validation avec Enter
+        $input.on('keydown', function (event) {
+          if (event.key === 'Enter') {
+            $(this).blur();
+          }
 
-	});
+          // Annulation avec Escape
+          if (event.key === 'Escape') {
+            $cell.text(oldValue);
+          }
+        });
+        //$('#table_rankings').bootstrapTable('refresh');
+        //reloadData();
+        //document.getElementById('edit_1').focus();
+      }
+    }
+  });
 
 	$('#table_rankings').bootstrapTable('destroy');
 	$('#table_rankings').bootstrapTable({data:arrayRankingsAthletes});
@@ -642,17 +661,19 @@ function startRace(){
 };
 
 function stopRace(){
-	//TODO: saveRankings fo results
-	saveResults();
-	//document.getElementById("main-menu").setAttribute("disabled",false);
-	//document.getElementById("main-link").setAttribute("disabled",false);
-	//document.getElementById("race-init-btn").setAttribute("disabled",false);
-	document.getElementById("main-menu").removeAttribute("disabled");
-	document.getElementById("main-link").removeAttribute("disabled");
-	document.getElementById("race-init-btn").removeAttribute("disabled");
+
+
+	document.getElementById("race-lock-btn").removeAttribute("disabled");
 	if(running){
 		stopTimer();
 	}
+};
+
+function lockResultsRace() {
+ 	document.getElementById("main-menu").removeAttribute("disabled");
+  document.getElementById("main-link").removeAttribute("disabled");
+  //TODO: saveRankings fo results
+	saveResults();
 };
 function resetRace(){
 
