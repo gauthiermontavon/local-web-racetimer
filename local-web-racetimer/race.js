@@ -68,13 +68,89 @@ var cptAthleteOnStartLine = 0;
 
 var listInsertedBib = [];
 
-
-
 function reloadData(){
 	$('#table_rankings').bootstrapTable('destroy');
 	$('#table_rankings').bootstrapTable({data:arrayRankingsAthletes});
 };
 
+
+function registerTableRankingsEvents() {
+
+  $('#table_rankings').on('focus', 'input.edit_timer', function () {
+      $(this).data('oldValue', this.value);
+      $(this).data('validated', false);
+  });
+
+  $('#table_rankings').on('keydown', 'input.edit_timer', function (event) {
+
+      const $input = $(this);
+
+      if (event.key === 'Enter') {
+          event.preventDefault();
+          $input.data('validated', true);
+          this.blur();
+      }
+
+
+      else if (event.key === 'Escape') {
+          event.preventDefault();
+          // Remet l'ancienne valeur - inutile car on va mettre à jour ranking et reloadData de bootstrapTable
+          //this.value = $input.data('oldValue');
+
+          this.blur();
+      }
+
+  });
+
+  var inEdition = false;
+  $('#table_rankings').on('blur', 'input.edit_timer', function () {
+
+    const $input = $(this);
+    var field_to_edit = $input.data('field');
+    var bib_to_edit = $input.data('bib');
+    console.log('bib_to_edit' + bib_to_edit);
+    var ranking = arrayRankingsAthletes.find((obj) => obj.bib === bib_to_edit.toString());
+    // Si la modification n'a pas été validée par Enter,
+    // on restaure l'ancienne valeur
+    if (!$input.data('validated')) {
+      console.log('[blur]CANCEL EDITION');
+      ranking[field_to_edit] =  $input.data('oldValue');
+    }
+    else {
+      console.log('[blur]SAVE EDITION');
+      ranking[field_to_edit] = this.value;
+    }
+    inEdition = false;
+    reloadData();
+
+  });
+
+  $('#table_rankings').on('dbl-click-cell.bs.table', function (e, field, value, row, $element) {
+    if (!running && !inEdition && (field == 'timerlap1' || field == 'timerlap2' ||field == 'timertotal')) {
+      inEdition = true;
+      console.log('WE WANT EDIT FIELD value:' + JSON.stringify($element));
+      console.log('e:' + value);
+      console.log('field:' + field);
+      console.log('value:' + value);
+      console.log('row:' + JSON.stringify(row));
+
+      var ranking = arrayRankingsAthletes.find((obj) => obj.bib === row.bib.toString());
+
+      console.log('athlete to update:' + JSON.stringify(ranking));
+
+      console.log('[ARG]you want edit => (' + field + '):' + row[field]);
+      console.log('[RANKING]you want edit => ('+field+'):' + ranking[field]);
+      //var oldValue = row[field];
+      //ranking[field] = 'UPDATED!!!';
+      ranking[field] = '<input type="text" class="edit_timer" data-field="'+field+'" data-bib="'+row.bib.toString()+'" class="form-control" value="' + row[field] + '">';
+      reloadData();
+      $('#table_rankings #edit_timer').focus();
+      //$('#table_rankings').bootstrapTable('refresh');
+      //ranking[field] = '<input type="text" class="form-control" value="' + oldValue + '">';
+
+    }
+  });
+}
 
 function init(){
 	console.log('data initialization');
@@ -118,47 +194,7 @@ function init(){
 	//==> bib,name,catégorie,team,discipline,temps VTT, temps CàP, temps total, status, action
 
 	//find athlete / order by team, bib
-	var featureEdit = true;
-  $('#table_rankings').on('click-cell.bs.table', function (e, value, row, $element) {
-    if (!running && featureEdit) {
-      var ranking = arrayRankingsAthletes.find((obj) => obj.bib === $element.bib.toString());
-
-      console.log('WE WANT EDIT FIELD value:' + JSON.stringify($element));
-      console.log('value:' + value);
-      if (value == 'timerlap1') {
-        var $cell = $($element);
-        var oldValue = $cell.text().trim();
-
-        $cell.html('<input type="text" class="form-control" value="' + oldValue + '">');
-        var $input = $cell.find('input');
-        console.log('INPUT INSERTION £!!');
-        $input.focus();
-
-        // Quand on quitte le champ
-        $input.on('blur', function () {
-          var newValue = $(this).val();
-          $cell.text(newValue);
-          // Ici tu peux éventuellement sauvegarder la nouvelle valeur
-          console.log('Nouvelle valeur :', newValue);
-        });
-
-        // Validation avec Enter
-        $input.on('keydown', function (event) {
-          if (event.key === 'Enter') {
-            $(this).blur();
-          }
-
-          // Annulation avec Escape
-          if (event.key === 'Escape') {
-            $cell.text(oldValue);
-          }
-        });
-        //$('#table_rankings').bootstrapTable('refresh');
-        //reloadData();
-        //document.getElementById('edit_1').focus();
-      }
-    }
-  });
+  registerTableRankingsEvents();
 
 	$('#table_rankings').bootstrapTable('destroy');
 	$('#table_rankings').bootstrapTable({data:arrayRankingsAthletes});
@@ -208,6 +244,17 @@ function renderBibButtonsHTML(){
 	//console.log('render bib grid'+htmlButtons);
 	document.getElementById('grid-bib').innerHTML=htmlButtons;
 };
+/** ----------------------------- */
+/** Interactions events functions */
+/** ----------------------------- */
+
+function saveEditionRanking(event) {
+  console.log('EVENT#saveEditionRanking');
+};
+
+function cancelEditionRanking(event) {
+  console.log('cancelEditionRanking');
+};
 
 function keyPressedBibInput(ele) {
     if(event.key === 'Enter') {
@@ -226,52 +273,6 @@ function clickButtonBib(_bib){
 		finishLapForBib(_bib);
 	}else{
 	}
-
-};
-
-function undoLastBibEntered(){
-	//TODO/FIXME : manager team mate undo start if undo the first one
-	var _bib = listInsertedBib.pop();
-	document.getElementById("input-bib-info").innerHTML = listInsertedBib.join(", ");
-	console.log("last inserted bib 2:"+_bib);
-	var ranking = arrayRankingsAthletes.find((obj) => obj.bib === _bib.toString());
-	console.log("ranking status: "+ranking.status);
-	console.log("ranking endTimeLap1: "+ranking.endTimeLap1);
-	console.log("ranking endTimeLap2: "+ranking.endTimeLap2);
-	if(ranking.endTimeLap2 > 0 ){
-		ranking.timerlap2 = runningAnimHtml;
-		ranking.endTimeLap2 = 0;
-		ranking.timersplit = '';
-		cptAthleteOnFinishLine-=1;
-	}
-	else if (ranking.endTimeLap1 > 0){
-
-		ranking.timerlap1 = runningAnimHtml;
-		ranking.endTimeLap1 = 0;
-		ranking.timerlap2 = '-';
-		ranking.startTimeLap2 = 0;
-		ranking.timersplit = '';
-		if(ranking.status == StatusAthleteRace.DNF.toString()){
-			cptAthleteOnFinishLine-=1;
-		}
-	}
-	ranking.status = StatusAthleteRace.RACING.toString();
-	//check on lapEvent
-	if(ranking.team > 0 && ranking.lapEvent == "VTT"){
-
-		cptAthleteOnFinishLine-=1;
-		var teammate = getTeamMate(ranking);
-		teammate.timerlap2 = '-';
-		teammate.startTimeLap2 = 0;
-		teammate.timersplit = '';
-		teammate.status = StatusAthleteRace.READY.toString();
-
-		updateStyleBibFlag(_bib,teammate.bib,document.getElementById('undo-bib'));
-	}else{
-		updateStyleBibFlag(_bib,null,document.getElementById('undo-bib'));
-	}
-	updateStatusRaceInfosHTML();
-	reloadData();
 
 };
 
@@ -361,6 +362,54 @@ function startManualBib(event,_bib){
 
 };
 
+/** ----------------------------- */
+/** ----------------------------- */
+
+function undoLastBibEntered(){
+	//TODO/FIXME : manager team mate undo start if undo the first one
+	var _bib = listInsertedBib.pop();
+	document.getElementById("input-bib-info").innerHTML = listInsertedBib.join(", ");
+	console.log("last inserted bib 2:"+_bib);
+	var ranking = arrayRankingsAthletes.find((obj) => obj.bib === _bib.toString());
+	console.log("ranking status: "+ranking.status);
+	console.log("ranking endTimeLap1: "+ranking.endTimeLap1);
+	console.log("ranking endTimeLap2: "+ranking.endTimeLap2);
+	if(ranking.endTimeLap2 > 0 ){
+		ranking.timerlap2 = runningAnimHtml;
+		ranking.endTimeLap2 = 0;
+		ranking.timersplit = '';
+		cptAthleteOnFinishLine-=1;
+	}
+	else if (ranking.endTimeLap1 > 0){
+
+		ranking.timerlap1 = runningAnimHtml;
+		ranking.endTimeLap1 = 0;
+		ranking.timerlap2 = '-';
+		ranking.startTimeLap2 = 0;
+		ranking.timersplit = '';
+		if(ranking.status == StatusAthleteRace.DNF.toString()){
+			cptAthleteOnFinishLine-=1;
+		}
+	}
+	ranking.status = StatusAthleteRace.RACING.toString();
+	//check on lapEvent
+	if(ranking.team > 0 && ranking.lapEvent == "VTT"){
+
+		cptAthleteOnFinishLine-=1;
+		var teammate = getTeamMate(ranking);
+		teammate.timerlap2 = '-';
+		teammate.startTimeLap2 = 0;
+		teammate.timersplit = '';
+		teammate.status = StatusAthleteRace.READY.toString();
+
+		updateStyleBibFlag(_bib,teammate.bib,document.getElementById('undo-bib'));
+	}else{
+		updateStyleBibFlag(_bib,null,document.getElementById('undo-bib'));
+	}
+	updateStatusRaceInfosHTML();
+	reloadData();
+
+};
 function isBibInMainStartRace(_bib){
 	//get desc of first lap of the race
 	var descFirstLapEvent = getLapEventDescForOrderSettings(1);
