@@ -55,6 +55,8 @@ buttonsAction +=   '<button onclick="startManualBib(event,\'$bib$\');return fals
 buttonsAction +=	'</div>';
 
 /**********************************************************/
+var activeEdition = false;
+var lockedResults = true;
 
 var dataAthletes = [];
 //displayedArray
@@ -68,9 +70,11 @@ var cptAthleteOnStartLine = 0;
 
 var listInsertedBib = [];
 
-function reloadData(){
+function reloadData() {
+  console.log('RACE#reloadData');
+
 	$('#table_rankings').bootstrapTable('destroy');
-	$('#table_rankings').bootstrapTable({data:arrayRankingsAthletes});
+  $('#table_rankings').bootstrapTable({ data: arrayRankingsAthletes });
 };
 
 
@@ -96,13 +100,11 @@ function registerTableRankingsEvents() {
           event.preventDefault();
           // Remet l'ancienne valeur - inutile car on va mettre à jour ranking et reloadData de bootstrapTable
           //this.value = $input.data('oldValue');
-
           this.blur();
       }
 
   });
 
-  var inEdition = false;
   $('#table_rankings').on('blur', 'input.edit_timer', function () {
 
     const $input = $(this);
@@ -120,14 +122,20 @@ function registerTableRankingsEvents() {
       console.log('[blur]SAVE EDITION');
       ranking[field_to_edit] = this.value;
     }
-    inEdition = false;
+    activeEdition = false;
     reloadData();
 
   });
 
   $('#table_rankings').on('dbl-click-cell.bs.table', function (e, field, value, row, $element) {
-    if (!running && !inEdition && (field == 'timerlap1' || field == 'timerlap2' ||field == 'timertotal')) {
-      inEdition = true;
+    console.log('-------EDIT MODE for field '+field+'---------');
+    console.log('running:' + running);
+    console.log('lockedResults:' + lockedResults);
+    console.log('activeEdition:' + activeEdition);
+     console.log('-------/EDIT MODE--------------');
+
+    if (!running && !lockedResults && !activeEdition && (field == 'timerlap1' || field == 'timerlap2' || field == 'timertotal')) {
+      activeEdition = true;
       console.log('WE WANT EDIT FIELD value:' + JSON.stringify($element));
       console.log('e:' + value);
       console.log('field:' + field);
@@ -151,9 +159,9 @@ function registerTableRankingsEvents() {
     }
   });
 }
-
-function init(){
-	console.log('data initialization');
+//Récupère les athlètes dans la DB et les insère dans la table rankings
+function initRace(){
+	console.log('RACE PAGE - data initialization');
 	dataAthletes = [];
 	athletesColl.find({}, function(results){
 		dataAthletes = results;
@@ -163,7 +171,6 @@ function init(){
 
 
 	//TODO: check bib attribution and team completed
-
 	dataAthletes = dataAthletes.sort((a, b) => a.bib - b.bib);
 	for(var i in dataAthletes){
 	  //FIXME : mettre info mainStart ici, et notion de champ caché dans la bootstrapTable ?
@@ -248,6 +255,32 @@ function renderBibButtonsHTML(){
 /** Interactions events functions */
 /** ----------------------------- */
 
+var buttonRaceLock = document.getElementById("race-lock-btn");
+buttonRaceLock.addEventListener('click', function () {
+
+    const isEditable = this.getAttribute('aria-pressed') !== 'true';
+
+    this.setAttribute('aria-pressed', isEditable);
+
+    this.classList.toggle('btn-outline-success', isEditable);
+    this.classList.toggle('btn-outline-secondary', !isEditable);
+
+    const icon = this.querySelector('i');
+    const label = this.querySelector('.lock-label');
+
+    icon.className = isEditable
+        ? 'bi bi-unlock-fill'
+        : 'bi bi-lock-fill';
+  console.log('isEditable :' + isEditable);
+  if (isEditable) {
+    unlockResultsRace();
+  }
+  else {
+    lockResultsRace();
+  }
+
+
+});
 function saveEditionRanking(event) {
   console.log('EVENT#saveEditionRanking');
 };
@@ -576,7 +609,6 @@ function finishLapForBib(_bib){
 
 };
 
-
 function finishEventForBib(_objRankAth, currentTime){
 	if(_objRankAth.cat !== 'Fun'){
 		_objRankAth.timersplit = currentTime;
@@ -652,7 +684,6 @@ function setStartTimeLap1Athletes(){
 
 };
 
-
 function saveResults(){
 
 	athletesColl.find({}, function(results){
@@ -677,9 +708,6 @@ function saveResults(){
 		console.log('dataAthletes in DB after save :'+JSON.stringify(results));
 
 	});
-
-
-
 };
 //-----------------------------------------------------------------
 //TIMER FEATURES
@@ -719,13 +747,20 @@ function stopRace(){
 };
 
 function lockResultsRace() {
+  lockedResults = true;
  	document.getElementById("main-menu").removeAttribute("disabled");
   document.getElementById("main-link").removeAttribute("disabled");
   //TODO: saveRankings fo results
 	saveResults();
 };
-function resetRace(){
 
+function unlockResultsRace() {
+  document.getElementById("main-menu").setAttribute("disabled",true);
+	document.getElementById("main-link").setAttribute("disabled",true);
+  lockedResults = false;
+};
+
+function resetRace(){
 	for(var i in arrayRankingsAthletes){
 		var bib = arrayRankingsAthletes[i].bib;
 		if(arrayRankingsAthletes[i].status != StatusAthleteRace.DNS.toString()){
@@ -747,7 +782,6 @@ function resetRace(){
 
 	renderBibButtonsHTML();
 	reloadData();
-
 
 	resetTimer();
 };

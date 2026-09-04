@@ -109,3 +109,42 @@ function chronoFormatToEpoch(chrono){
 	console.log('epoch:', epoch);
 	return epoch;
 }
+
+//"settings", "startlist", "race","results"
+function initMainMenu(_forRoute) {
+  console.debug('INIT MAIN MENU'+_forRoute);
+  switch (_forRoute) {
+    case "startlist":
+      document.getElementById("main-menu").removeAttribute("disabled");
+      document.getElementById("main-link").removeAttribute("disabled");
+      document.getElementById("race-menu").setAttribute("disabled",true);
+      document.getElementById("results-menu").setAttribute("disabled", true);
+      break;
+    case "race":
+      document.getElementById("main-menu").setAttribute("disabled",true);
+      document.getElementById("main-link").setAttribute("disabled", true);
+
+      break;
+    case "results":
+      document.getElementById("main-link").removeAttribute("disabled");
+      document.getElementById("main-menu").removeAttribute("disabled");
+
+      document.getElementById("startlist-menu").removeAttribute("disabled");
+      document.getElementById("race-menu").removeAttribute("disabled");
+      document.getElementById("results-menu").removeAttribute("disabled");
+      document.getElementById("settings-menu").removeAttribute("disabled");
+
+      break;
+    case "settings":
+      document.getElementById("main-link").removeAttribute("disabled");
+      document.getElementById("main-menu").removeAttribute("disabled");
+
+      document.getElementById("startlist-menu").removeAttribute("disabled");
+      document.getElementById("race-menu").removeAttribute("disabled");
+      document.getElementById("results-menu").removeAttribute("disabled");
+      document.getElementById("settings-menu").removeAttribute("disabled");
+
+      break;
+
+  }
+};

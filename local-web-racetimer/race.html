@@ -1,6 +1,6 @@
 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-	<h2>Cigathlon 2025 - Course</h2>
-	    <button id="race-init-btn" type="button" class="btn btn-outline-success" onclick="init();">Initialiser</button>
+	<h2>Cigathlon 2026 - Course</h2>
+	    <button id="race-init-btn" type="button" class="btn btn-outline-success" onclick="initRace();">Initialiser</button>
 
 </div>
 <!--<div class="d-flex justify-content-center flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">-->
@@ -56,8 +56,10 @@
 </div>
 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 ">
 	<h2>Classement</h2>
-		<button id="race-lock-btn" type="button" class="btn btn-outline-success" disabled onclick="lockResultsRace();">Verrouiller</button>
+
+
 </div>
+
 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 ">
 	<div class="table-responsive small">
         <table class="table table-striped table-sm" id="table_rankings">
@@ -82,3 +84,11 @@
         </table>
       </div>
 </div>
+
+<button
+    id="race-lock-btn"
+    type="button"
+    class="btn btn-outline-secondary"
+>
+    <i class="bi bi-lock-fill"></i>
+</button>

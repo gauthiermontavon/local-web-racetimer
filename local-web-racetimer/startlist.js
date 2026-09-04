@@ -41,8 +41,11 @@ function reloadData(){
 	});
 	console.log(' --------------');
 	console.log("dataSettings:",dataSettings)
-	document.getElementById("label_raceName").innerHTML = dataSettings.raceName;
-	populateDataPage();
+  document.getElementById("label_raceName").innerHTML = dataSettings.raceName;
+
+  populateDataPage();
+  initMainMenu("startlist");
+
 }
 /**
 function must be there if page contains dynamic data (implement interface)
@@ -76,8 +79,6 @@ function renderOptionsForLapsEvent(){
 	document.getElementById('inputLap2').innerHTML=options;
 	document.getElementById('inputLapFun').innerHTML=options;
 };
-
-
 
 function addAthleteSolo(){
 	var formdata = new FormData(document.getElementById("form-solo"));
