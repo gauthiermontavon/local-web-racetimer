@@ -38,6 +38,7 @@ jobs:
           rsync -az --delete \
             --exclude='.git' \
             --exclude='.github' \
+            --exclude='public_results/' \
             ./ \
             "${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }}:/var/www/cigachrono/" \
             -e "ssh -i ~/.ssh/deploy_key"
