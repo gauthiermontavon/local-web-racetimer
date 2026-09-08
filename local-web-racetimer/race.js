@@ -298,7 +298,7 @@ buttonPublish.addEventListener('click', async function () {
   const filename = generatePublishResultsFilename();
 
 	const response = await fetch(
-  `/public_results/${filename}`,
+  `../public_results/${filename}`,
   {
       method: 'PUT',
       headers: {
