@@ -9,6 +9,16 @@ var StatusAthleteRace = {
 	RACING: "racing"
 };
 
+function generatePublishResultsFilename() {
+  const now = new Date();
+
+  const pad = n => String(n).padStart(2, '0');
+
+  const filename =
+    `results_${now.getFullYear()}_${pad(now.getMonth() + 1)}_${pad(now.getDate())}_${pad(now.getHours())}${pad(now.getMinutes())}${pad(now.getSeconds())}.json`;
+  return filename;
+};
+
 function clearAllFormInputs(idFormElement){
 	document.getElementById(idFormElement).reset();
 };

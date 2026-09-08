@@ -1,4 +1,5 @@
 //FIXME arrayRankingsAthletes vs dataAthletes
+// arrayRanking contient aussi les boutons et éléments de rendu HTML. dataAthletes seulement les données.
 /*
 dataAthletes : contient uniquement les données à sauvegarder dans DB
 arrayRankingsAthletes : données issues de dataAthletes + données à afficher de la course live (status, btn actions)
@@ -256,6 +257,7 @@ function renderBibButtonsHTML(){
 /** ----------------------------- */
 
 var buttonRaceLock = document.getElementById("race-lock-btn");
+var buttonPublish = document.getElementById("publish-btn");
 buttonRaceLock.addEventListener('click', function () {
 
     const isEditable = this.getAttribute('aria-pressed') !== 'true';
@@ -279,8 +281,37 @@ buttonRaceLock.addEventListener('click', function () {
     lockResultsRace();
   }
 
-
 });
+
+buttonPublish.addEventListener('click', async function () {
+  console.log('publish results');
+//report last updated in ranking live array into localDB athletes
+  saveResults();
+  //convert localDB to pure json object
+  var data_to_publish = {};
+  athletesColl.find({},  function (results) {
+    data_to_publish = results;
+    console.log('dataAthletes in DB to publish :' + JSON.stringify(results));
+
+  });
+
+  const filename = generatePublishResultsFilename();
+
+	const response = await fetch(
+  `/public_results/${filename}`,
+  {
+      method: 'PUT',
+      headers: {
+          'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(data_to_publish, null, 2)
+  });
+
+	if (!response.ok) {
+    throw new Error(`Publication échouée : ${response.status}`);
+	}
+});
+
 function saveEditionRanking(event) {
   console.log('EVENT#saveEditionRanking');
 };
@@ -685,12 +716,6 @@ function setStartTimeLap1Athletes(){
 };
 
 function saveResults(){
-
-	athletesColl.find({}, function(results){
-		console.log('dataAthletes in DB before save :'+JSON.stringify(results));
-	});
-
-
 	//pour chaque ath+ses données LIVE race, classé par bib
 	arrayRankingsAthletes = arrayRankingsAthletes.sort((a, b) => a.bib - b.bib);
 	for(var i in arrayRankingsAthletes){
@@ -704,10 +729,7 @@ function saveResults(){
 			};
 		});
 	}
-	athletesColl.find({}, function(results){
-		console.log('dataAthletes in DB after save :'+JSON.stringify(results));
 
-	});
 };
 //-----------------------------------------------------------------
 //TIMER FEATURES
