@@ -77,8 +77,6 @@ function reloadData() {
 	$('#table_rankings').bootstrapTable('destroy');
   $('#table_rankings').bootstrapTable({ data: arrayRankingsAthletes });
 };
-
-
 function registerTableRankingsEvents() {
 
   $('#table_rankings').on('focus', 'input.edit_timer', function () {
@@ -105,7 +103,6 @@ function registerTableRankingsEvents() {
       }
 
   });
-
   $('#table_rankings').on('blur', 'input.edit_timer', function () {
 
     const $input = $(this);
@@ -311,15 +308,6 @@ buttonPublish.addEventListener('click', async function () {
     throw new Error(`Publication échouée : ${response.status}`);
 	}
 });
-
-function saveEditionRanking(event) {
-  console.log('EVENT#saveEditionRanking');
-};
-
-function cancelEditionRanking(event) {
-  console.log('cancelEditionRanking');
-};
-
 function keyPressedBibInput(ele) {
     if(event.key === 'Enter') {
 
@@ -339,7 +327,6 @@ function clickButtonBib(_bib){
 	}
 
 };
-
 
 function dnsBib(event,_bib){
 	event.preventDefault();
