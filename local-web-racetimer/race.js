@@ -235,7 +235,7 @@ function renderBibButtonsHTML(){
 		htmlButtons += '<div class="col"><button disabled id="btn-bib-'+arrayRankingsAthletes[i].bib+'" type="button" style="width:45px;" onclick="clickButtonBib('+arrayRankingsAthletes[i].bib+')"';
 		if(!isBibInMainStartRace(arrayRankingsAthletes[i].bib)){
 			htmlButtons += 'class="btn btn-outline-warning bib-not-main-start" ';
-		}else{11155
+		}else{
 			htmlButtons += 'class="btn btn-outline-warning bib-main-start" ';
 		}
 		htmlButtons += '>'+arrayRankingsAthletes[i].bib+'</button></div>';
