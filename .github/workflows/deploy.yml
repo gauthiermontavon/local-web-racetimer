@@ -18,6 +18,38 @@ jobs:
         uses: actions/checkout@v6
         with:
           ref: ${{ inputs.ref }}
+      # --------------------------------------------------
+      # Build information
+      # --------------------------------------------------
+      - name: Generate build information
+        env:
+          DEPLOY_TAG: ${{ inputs.tag }}
+        run: |
+          BUILD_DATE=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
+          BUILD_ID=$(date -u +"%Y%m%d-%H%M%S")
+          COMMIT=$(git rev-parse --short HEAD)
+
+          if [ -n "$DEPLOY_TAG" ]; then
+            VERSION="$DEPLOY_TAG"
+          else
+            VERSION="dev"
+          fi
+
+          cat > version.json <<EOF
+          {
+            "version": "$VERSION",
+            "commit": "$COMMIT",
+            "build": "$BUILD_ID",
+            "builtAt": "$BUILD_DATE"
+          }
+          EOF
+
+          echo "Version: $VERSION"
+          echo "Commit:  $COMMIT"
+          echo "Build:   $BUILD_ID"
+          echo "Built:   $BUILD_DATE"
+
+          cat version.json
 
       - name: Setup SSH
         env:
@@ -42,3 +74,19 @@ jobs:
             ./ \
             "${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }}:/var/www/cigachrono/" \
             -e "ssh -i ~/.ssh/deploy_key"
+      # --------------------------------------------------
+      # Verify
+      # --------------------------------------------------
+      - name: Verify deployment
+        run: |
+          ssh -i ~/.ssh/deploy_key \
+            "${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }}" \
+            "cat /var/www/cigachrono/version.json"
+
+      # --------------------------------------------------
+      # Cleanup
+      # --------------------------------------------------
+      - name: Cleanup SSH key
+        if: always()
+        run: |
+          rm -f ~/.ssh/deploy_key
