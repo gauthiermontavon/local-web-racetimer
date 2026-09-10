@@ -271,13 +271,18 @@
 <script src="./utils.js"></script>
 <!--<script src="./settings.js"></script>-->
 <script>
-const version = await fetch('../version.json')
-  .then(r => r.json());
 
-document.querySelector('#app-version').textContent =
-  `${version.version} (${version.commit})`;
 setupApplication();
 window.onhashchange=routeChange;
+fetch('../version.json')
+    .then(response => response.json())
+    .then(version => {
+        document.getElementById('app-version').textContent =
+            `${version.version} · ${version.commit}`;
+    })
+    .catch(error => {
+        console.error(error);
+    });
 </script>
 
 
