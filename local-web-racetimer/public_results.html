@@ -31,8 +31,6 @@
 
 	<link rel="stylesheet" href="./static/assets/dist/jquery/jquery-ui.css">
 
-
-
 <meta name="theme-color" content="#712cf9">
 
 
@@ -177,63 +175,107 @@
 
 <div class="container-fluid">
   <div class="row">
-    <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4" id="router-outlet">
+    <main class="col-lg-10 offset-lg-1" id="router-outlet">
+    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+        <h2>Cigathlon 2026 - Résultats publiés</h2>
+    </div>
+   	<p class="d-inline-flex gap-1">
+		<button class="btn btn-outline-primary" type="button" data-bs-toggle="collapse" data-bs-target="#rankingsVTT" aria-expanded="false" aria-controls="collapseExample">
+			VTT
+		</button>
+		<button class="btn btn-outline-primary" type="button" data-bs-toggle="collapse" data-bs-target="#rankingsCAP" aria-expanded="false" aria-controls="collapseExample">
+			Course à pied
+		</button>
+		<button class="btn btn-outline-primary" type="button" data-bs-toggle="collapse" data-bs-target="#rankingsTrophy" aria-expanded="false" aria-controls="collapseExample">
+			Trophée
+		</button>
+
+	</p>
 
 
-        <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-	<h2>Cigathlon 2026 - Resultats publiés</h2>
-        </div>
 
-        <h2>Classement</h2>
+    <div class="collapse" id="rankingsVTT">
+        <table class="table table-striped table-sm" id="table_rankings_vtt">
+          <thead>
+            <tr>
+              <th scope="col" data-field="rang">#</th>
+              <th scope="col" data-field="A_name">Catégorie A</th>
+              <th scope="col" data-field="A_chrono">Chrono</th>
+			  <th scope="col" >&nbsp;</th>
+              <th scope="col" data-field="S1_name">Catégorie S1</th>
+              <th scope="col" data-field="S1_chrono">Chrono</th>
 
-        <p class="d-inline-flex gap-1">
-		<div id="filter-cat">
-		<label for="select-cat-rankings">Par catégorie:</label>
-		<select id="select-cat-rankings" class="bootstrap-table-filter-control-cat">
-			<!--<option value="Tous">Tous</option>
-			<option value="Seniors">Seniors</option>
-			<option value="Actifs">Actifs</option>
-			<option value="Team">Team</option>
-			<option value="Fun">Fun</option>	-->
-		</select>
-		</div>
+			  <th scope="col" >&nbsp;</th>
+              <th scope="col" data-field="S2_name">Catégorie S2</th>
+              <th scope="col" data-field="S2_chrono">Chrono</th>
 
+			  <th scope="col" >&nbsp;</th>
+              <th scope="col" data-field="Team_name">Catégorie Team</th>
+              <th scope="col" data-field="Team_chrono">Chrono</th>
+            </tr>
+          </thead>
+          <tbody id="rankings-vtt-data">
 
-         </p>
+          </tbody>
+        </table>
+    </div>
 
-        <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 ">
-	<div class="table-responsive small">
-                <table class="table table-striped table-sm" id="table_rankings"
-                    data-url="json/results_2026_09_08_211442.json"
-		data-filter-control="true"
+    <div class="collapse" id="rankingsCAP">
+        <table class="table table-striped table-sm" id="table_rankings_cap">
+          <thead>
+            <tr>
+              <th scope="col" data-field="rang">#</th>
+              <th scope="col" data-field="A_name">Catégorie A</th>
+              <th scope="col" data-field="A_chrono">Chrono</th>
+			  <th scope="col" >&nbsp;</th>
+              <th scope="col" data-field="S1_name">Catégorie S1</th>
+              <th scope="col" data-field="S1_chrono">Chrono</th>
 
-		data-show-print="true">
-                  <thead>
-                    <tr>
-                      <th scope="col" data-field="bib" data-sortable="true">#</th>
-                      <th scope="col" data-field="name">NOM Prénom</th>
-                      <th scope="col" data-field="cat" data-filter-control="select">Catégorie</th>
-                      <th scope="col" data-field="team">Team</th>
-			  <th scope="col" data-field="lapEvent">Discipline</th>
-			  <th scope="col" data-field="timerlap1" data-sortable="true">Temps VTT</th>
-			  <th scope="col" data-field="timerlap2" data-sortable="true" data-print-ignore="true">Temps Course à pied</th>
-			  <th scope="col" data-field="timertotal" data-sortable="true">Temps total</th>
-			  <th scope="col" data-field="status">Statut</th>
+			  <th scope="col" >&nbsp;</th>
+              <th scope="col" data-field="S2_name">Catégorie S2</th>
+              <th scope="col" data-field="S2_chrono">Chrono</th>
 
-                    </tr>
-                  </thead>
-                  <!--<tbody id="rankings-data">
+			  <th scope="col" >&nbsp;</th>
+              <th scope="col" data-field="Team_name">Catégorie Team</th>
+              <th scope="col" data-field="Team_chrono">Chrono</th>
+            </tr>
+          </thead>
+          <tbody id="rankings-cap-data">
 
-                  </tbody>-->
-                </table>
-              </div>
-        </div>
+          </tbody>
+        </table>
+    </div>
+
+    <div class="collapse" id="rankingsTrophy">
+        <table class="table table-striped table-sm" id="table_rankings_total">
+          <thead>
+            <tr>
+              <th scope="col" data-field="rang">#</th>
+              <th scope="col" data-field="A_name">Catégorie A</th>
+              <th scope="col" data-field="A_chrono">Chrono</th>
+			  <th scope="col" >&nbsp;</th>
+              <th scope="col" data-field="S1_name">Catégorie S1</th>
+              <th scope="col" data-field="S1_chrono">Chrono</th>
+
+			  <th scope="col" >&nbsp;</th>
+              <th scope="col" data-field="S2_name">Catégorie S2</th>
+              <th scope="col" data-field="S2_chrono">Chrono</th>
+
+			  <th scope="col" >&nbsp;</th>
+              <th scope="col" data-field="Team_name">Catégorie Team</th>
+              <th scope="col" data-field="Team_chrono">Chrono</th>
+            </tr>
+          </thead>
+          <tbody id="rankings-total-data">
+
+          </tbody>
+        </table>
+    </div>
 
     </main>
   </div>
 </div>
-
-
+<script src="./public_results.js"></script>
 <!--<script src="./utils.js"></script>-->
 <!--<script src="./settings.js"></script>-->
 

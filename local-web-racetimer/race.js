@@ -294,19 +294,40 @@ buttonPublish.addEventListener('click', async function () {
 
   const filename = generatePublishResultsFilename();
 
-	const response = await fetch(
-  `../public_results/${filename}`,
-  {
-      method: 'PUT',
-      headers: {
-          'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(data_to_publish, null, 2)
-  });
+  // Publication de latest.json
+  let response = await fetch(
+      `../public_results/latest.json`,
+      {
+          method: 'PUT',
+          headers: {
+              'Content-Type': 'application/json'
+          },
+          body: json
+      }
+  );
 
-	if (!response.ok) {
-    throw new Error(`Publication échouée : ${response.status}`);
-	}
+  if (!response.ok) {
+      throw new Error(`Publication de latest.json échouée : ${response.status}`);
+  }
+
+  // Publication de l'archive
+  response = await fetch(
+      `../public_results/${filename}`,
+      {
+          method: 'PUT',
+          headers: {
+              'Content-Type': 'application/json'
+          },
+          body: json
+      }
+  );
+
+  if (!response.ok) {
+      throw new Error(`Publication de ${filename} échouée : ${response.status}`);
+  }
+
+  console.log(`Publication réussie : latest.json + ${filename}`);
+
 });
 function keyPressedBibInput(ele) {
     if(event.key === 'Enter') {
