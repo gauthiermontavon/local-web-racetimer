@@ -302,7 +302,7 @@ buttonPublish.addEventListener('click', async function () {
           headers: {
               'Content-Type': 'application/json'
           },
-          body: json
+          body: JSON.stringify(data_to_publish, null, 2)
       }
   );
 
@@ -318,7 +318,7 @@ buttonPublish.addEventListener('click', async function () {
           headers: {
               'Content-Type': 'application/json'
           },
-          body: json
+          body: JSON.stringify(data_to_publish, null, 2)
       }
   );
 
