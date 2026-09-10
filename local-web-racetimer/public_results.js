@@ -64,6 +64,7 @@ async function loadLatestResults() {
 
   const response = await fetch(results_url);
   const data = await response.json();
+  return data;
 }
 
 //charge les données stockés dans le fichier json (public_results/results_{timestamp}.json)
