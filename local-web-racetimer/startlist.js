@@ -15,7 +15,18 @@ buttonsAction +=  '<div class="input-group-append" id="button-addon4">';
 buttonsAction +=	'<button onclick="updateBib(\'$id$\');return false;" class="btn btn-outline-secondary" type="button" id="button-addon2">#</button>'
 buttonsAction +=   '<button onclick="deleteAthlete(\'$id$\');return false;" type="button" class="btn btn-outline-danger"><svg class="bi"><use xlink:href="#trash"/></svg>Supprimer</button>'
 
-buttonsAction +=	'</div></div>';
+buttonsAction += '</div></div>';
+
+function renderOptionsForLapsEvent(){
+	var options = '<option selected>Choisir...</option>';
+	for (var i in dataLaps){
+		options += '<option value="'+dataLaps[i].desc+'">'+dataLaps[i].desc+'</option>';
+	}
+
+	document.getElementById('inputLap1').innerHTML=options;
+	document.getElementById('inputLap2').innerHTML=options;
+	document.getElementById('inputLapFun').innerHTML=options;
+};
 
 function reloadData(){
 
@@ -39,14 +50,54 @@ function reloadData(){
 	lapsEvent.find({}, function(results){
 		dataLaps = results;
 	});
-	console.log(' --------------');
-	console.log("dataSettings:",dataSettings)
-  document.getElementById("label_raceName").innerHTML = dataSettings.raceName;
+
+  //document.getElementById("label_raceName").innerHTML = dataSettings.raceName;
+  //
+  var athleteNotReady = dataAthletes.find((obj) => obj.bib === '0');
+  if (athleteNotReady !== undefined) {
+    alert('Attention certains athlètes n\'ont pas de dossard attribué');
+    initMainMenu("startlist",true);
+  }
+  else
+  {
+    initMainMenu("startlist",false);
+  }
 
   populateDataPage();
-  initMainMenu("startlist");
+
+  registerFormEvents();
 
 }
+
+/**
+ * Interactions UI events registration
+ * -----------------------------------
+ */
+function registerFormEvents() {
+
+
+  document.querySelectorAll('.toggle-btn').forEach(button => {
+      button.addEventListener('click', () => {
+
+          document.querySelector('.toggle-btn.active')?.classList.remove('active');
+          button.classList.add('active');
+
+          document.querySelectorAll('.toggle-content').forEach(div => {
+              div.classList.add('d-none');
+          });
+
+          document.querySelector(button.dataset.target).classList.remove('d-none');
+      });
+  });
+}
+
+function registerTableStartListEvents() {
+  //FIXME: implement click events HERE
+}
+
+ /**
+  * -----------------------------------
+  */
 /**
 function must be there if page contains dynamic data (implement interface)
 */
@@ -66,19 +117,7 @@ function populateDataPage(){
 	renderOptionsForLapsEvent();
 
 };
-/**
- render HTML methods
- */
-function renderOptionsForLapsEvent(){
-	var options = '<option selected>Choisir...</option>';
-	for (var i in dataLaps){
-		options += '<option value="'+dataLaps[i].desc+'">'+dataLaps[i].desc+'</option>';
-	}
 
-	document.getElementById('inputLap1').innerHTML=options;
-	document.getElementById('inputLap2').innerHTML=options;
-	document.getElementById('inputLapFun').innerHTML=options;
-};
 
 function addAthleteSolo(){
 	var formdata = new FormData(document.getElementById("form-solo"));

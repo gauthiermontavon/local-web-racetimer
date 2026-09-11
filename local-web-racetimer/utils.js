@@ -121,14 +121,14 @@ function chronoFormatToEpoch(chrono){
 }
 
 //"settings", "startlist", "race","results"
-function initMainMenu(_forRoute) {
+function initMainMenu(_forRoute,_locked) {
   console.debug('INIT MAIN MENU'+_forRoute);
   switch (_forRoute) {
     case "startlist":
       document.getElementById("main-menu").removeAttribute("disabled");
       document.getElementById("main-link").removeAttribute("disabled");
-      document.getElementById("race-menu").setAttribute("disabled",true);
-      document.getElementById("results-menu").setAttribute("disabled", true);
+      document.getElementById("race-menu").setAttribute("disabled",_locked);
+      document.getElementById("results-menu").setAttribute("disabled", _locked);
       break;
     case "race":
       document.getElementById("main-menu").setAttribute("disabled",true);

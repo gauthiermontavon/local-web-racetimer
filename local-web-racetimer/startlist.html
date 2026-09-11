@@ -6,18 +6,21 @@
 	<h2>Enregistrement des participants</h2>
 	<p class="d-inline-flex gap-1">
 
-		<button class="btn btn-outline-primary" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolo" aria-expanded="false" aria-controls="collapseExample">
+		<button class="btn btn-outline-primary toggle-btn active" data-target="#collapseSolo" >
 			Participant SOLO
 		</button>
-		<button class="btn btn-outline-primary" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFun" aria-expanded="false" aria-controls="collapseExample">
+		<button class="btn btn-outline-primary toggle-btn" data-target="#collapseFun" >
 			Participant FUN
 		</button>
-		<button class="btn btn-outline-primary" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTeam" aria-expanded="false" aria-controls="collapseExample">
+		<button class="btn btn-outline-primary toggle-btn"  data-target="#collapseTeam">
 			Equipe
 		</button>
 
 	</p>
-	<div class="collapse" id="collapseSolo">
+
+
+
+	<div class="toggle-content" id="collapseSolo">
 	  <div class="card card-body">
 		<form class="row g-3" id="form-solo">
 			<div class="col-md-4">
@@ -40,7 +43,7 @@
 	  </div>
 	</div>
 
-	<div class="collapse" id="collapseFun">
+	<div class="toggle-content d-none" id="collapseFun">
 	  <div class="card card-body">
 		<form class="row g-3" id="form-fun">
 			<div class="col-md-4">
@@ -65,7 +68,7 @@
 	  </div>
 	</div>
 
-	<div class="collapse" id="collapseTeam">
+	<div class="toggle-content d-none" id="collapseTeam">
 	  <div class="card card-body">
 		<form class="row g-3" id="form-team">
 			<div class="col-md-4">
