@@ -51,18 +51,6 @@ function reloadData(){
 		dataLaps = results;
 	});
 
-  //document.getElementById("label_raceName").innerHTML = dataSettings.raceName;
-  //
-  var athleteNotReady = dataAthletes.find((obj) => obj.bib === '0');
-  if (athleteNotReady !== undefined) {
-    alert('Attention certains athlètes n\'ont pas de dossard attribué');
-    initMainMenu("startlist",true);
-  }
-  else
-  {
-    initMainMenu("startlist",false);
-  }
-
   populateDataPage();
 
   registerFormEvents();
@@ -75,6 +63,10 @@ function reloadData(){
  */
 function registerFormEvents() {
 
+  const icon = document.querySelector('i.bi-printer').addEventListener('click', function () {
+    sendJSONToBackend(athletesColl.items, '../start_list/LocalDB_athletes.json');
+
+  });
 
   document.querySelectorAll('.toggle-btn').forEach(button => {
       button.addEventListener('click', () => {

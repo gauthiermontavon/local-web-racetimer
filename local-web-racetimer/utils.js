@@ -9,6 +9,23 @@ var StatusAthleteRace = {
 	RACING: "racing"
 };
 
+async function sendJSONToBackend(_data,_path) {
+  // Publication de latest.json
+  let response = await fetch(
+      _path,
+      {
+          method: 'PUT',
+          headers: {
+              'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(_data, null, 2)
+      }
+  );
+
+  if (!response.ok) {
+      throw new Error(`Publication de latest.json échouée : ${response.status}`);
+  }
+};
 function generatePublishResultsFilename() {
   const now = new Date();
 
@@ -119,42 +136,3 @@ function chronoFormatToEpoch(chrono){
 	console.log('epoch:', epoch);
 	return epoch;
 }
-
-//"settings", "startlist", "race","results"
-function initMainMenu(_forRoute,_locked) {
-  console.debug('INIT MAIN MENU'+_forRoute);
-  switch (_forRoute) {
-    case "startlist":
-      document.getElementById("main-menu").removeAttribute("disabled");
-      document.getElementById("main-link").removeAttribute("disabled");
-      document.getElementById("race-menu").setAttribute("disabled",_locked);
-      document.getElementById("results-menu").setAttribute("disabled", _locked);
-      break;
-    case "race":
-      document.getElementById("main-menu").setAttribute("disabled",true);
-      document.getElementById("main-link").setAttribute("disabled", true);
-
-      break;
-    case "results":
-      document.getElementById("main-link").removeAttribute("disabled");
-      document.getElementById("main-menu").removeAttribute("disabled");
-
-      document.getElementById("startlist-menu").removeAttribute("disabled");
-      document.getElementById("race-menu").removeAttribute("disabled");
-      document.getElementById("results-menu").removeAttribute("disabled");
-      document.getElementById("settings-menu").removeAttribute("disabled");
-
-      break;
-    case "settings":
-      document.getElementById("main-link").removeAttribute("disabled");
-      document.getElementById("main-menu").removeAttribute("disabled");
-
-      document.getElementById("startlist-menu").removeAttribute("disabled");
-      document.getElementById("race-menu").removeAttribute("disabled");
-      document.getElementById("results-menu").removeAttribute("disabled");
-      document.getElementById("settings-menu").removeAttribute("disabled");
-
-      break;
-
-  }
-};

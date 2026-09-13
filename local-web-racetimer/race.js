@@ -126,33 +126,18 @@ function registerTableRankingsEvents() {
   });
 
   $('#table_rankings').on('dbl-click-cell.bs.table', function (e, field, value, row, $element) {
-    console.log('-------EDIT MODE for field '+field+'---------');
-    console.log('running:' + running);
-    console.log('lockedResults:' + lockedResults);
-    console.log('activeEdition:' + activeEdition);
-     console.log('-------/EDIT MODE--------------');
 
     if (!running && !lockedResults && !activeEdition && (field == 'timerlap1' || field == 'timerlap2' || field == 'timertotal')) {
       activeEdition = true;
-      console.log('WE WANT EDIT FIELD value:' + JSON.stringify($element));
-      console.log('e:' + value);
-      console.log('field:' + field);
-      console.log('value:' + value);
-      console.log('row:' + JSON.stringify(row));
 
       var ranking = arrayRankingsAthletes.find((obj) => obj.bib === row.bib.toString());
-
       console.log('athlete to update:' + JSON.stringify(ranking));
 
       console.log('[ARG]you want edit => (' + field + '):' + row[field]);
       console.log('[RANKING]you want edit => ('+field+'):' + ranking[field]);
-      //var oldValue = row[field];
-      //ranking[field] = 'UPDATED!!!';
       ranking[field] = '<input type="text" class="edit_timer" data-field="'+field+'" data-bib="'+row.bib.toString()+'" class="form-control" value="' + row[field] + '">';
       reloadData();
       $('#table_rankings #edit_timer').focus();
-      //$('#table_rankings').bootstrapTable('refresh');
-      //ranking[field] = '<input type="text" class="form-control" value="' + oldValue + '">';
 
     }
   });
@@ -293,8 +278,12 @@ buttonPublish.addEventListener('click', async function () {
   });
 
   const filename = generatePublishResultsFilename();
-
   // Publication de latest.json
+  sendJSONToBackend(data_to_publish, `../public_results/latest.json`);
+ // Publication de l'archive
+  sendJSONToBackend(data_to_publish,  `../public_results/${filename}`);
+
+/*
   let response = await fetch(
       `../public_results/latest.json`,
       {
@@ -310,7 +299,7 @@ buttonPublish.addEventListener('click', async function () {
       throw new Error(`Publication de latest.json échouée : ${response.status}`);
   }
 
-  // Publication de l'archive
+
   response = await fetch(
       `../public_results/${filename}`,
       {
@@ -325,7 +314,7 @@ buttonPublish.addEventListener('click', async function () {
   if (!response.ok) {
       throw new Error(`Publication de ${filename} échouée : ${response.status}`);
   }
-
+*/
   console.log(`Publication réussie : latest.json + ${filename}`);
 
 });
