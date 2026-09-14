@@ -87,7 +87,13 @@ async function reloadData(){
 };
 
 function generateColsDef(_setCategories) {
-  console.log('generateColsDef:',[..._setCategories])
+  console.log('generateColsDef:', [..._setCategories])
+
+  const ordre = ["D","A", "S1", "S2", "Team", "Fun"];
+
+  const orderedSetCategories = [..._setCategories].sort(
+      (a, b) => ordre.indexOf(a) - ordre.indexOf(b)
+  );
   //génération des définitions de colonnes pour la table, basé sur les catégories rencontrées ( catVTT Set)
   const columnsDefinition = [
     {
@@ -95,14 +101,38 @@ function generateColsDef(_setCategories) {
       field: 'rang'
     }
   ];
-  _setCategories.forEach(category => {
+  orderedSetCategories.forEach(category => {
     columnsDefinition.push({
       title: `Catégorie ${category}`,
-      field: `${category}_name`
+      field: `${category}_name`,
+      cellStyle: function (value, row, index, field) {
+        console.log('value' + value);
+        console.log('row' + row);
+        console.log('index' + index);
+        console.log('field' + field);
+        // on change le style pour le listing de la catégorie équipe
+        if (field === 'Team_name') {
+          return {
+            css: {
+
+              'background-color': Math.floor(index / 2) % 2 === 0
+                ? '#F8EA78'
+                : '#83C586'
+            }
+          };
+
+        } else {
+          return {
+            css: {}
+          };
+        }
+
+      }
     });
     columnsDefinition.push({
       title: 'Chrono',
       field: `${category}_chrono`
+
     });
     columnsDefinition.push({
       title: '',
@@ -193,7 +223,8 @@ function fillCatRankingsTotal(){
 		if (x < y) {return -1;}
 		if (x > y) {return 1;}
 		return 0;
-	});
+  });
+
 	for(var i in dataAthletes){
 		console.log(dataAthletes[i].timertotal);
 	}
@@ -205,12 +236,22 @@ function fillCatRankingsTotal(){
       //on maintient une liste des catégories rencontrées en total (trophée)
       catTotal.add(catCurrentAth);
 			for(var j in catRankingsTotal){
-				//si pas encore d'athlete de la categorie, on ajoute
-				if(catRankingsTotal[j][catCurrentAth+"_chrono"] == undefined){
+
+
+        //si pas encore d'athlete de la categorie au rang j, on ajoute
+        if(catRankingsTotal[j][catCurrentAth+"_chrono"] == undefined){
 					catRankingsTotal[j][catCurrentAth+"_chrono"] = dataAthletes[i].timertotal;
 					catRankingsTotal[j][catCurrentAth+"_name"] = dataAthletes[i].name;
 					break;
-				}
+        }
+        //FIXME:
+       	// si l'athlete précédent est le teammate, on les groupe à la même ligne => TEAMMATE1 / TEAMMATE2
+        if (j>0 && dataAthletes[i].team > 0 && dataAthletes[i].team == dataAthletes[i - 1].team) {
+              console.log('TEAMMATE 2e RANKINGKKKKKKK....j='+j+':' + dataAthletes[i].name);
+              console.log('teammate info:' + catRankingsTotal[j - 1][catCurrentAth + "_name"]);
+              //catRankingsTotal[j - 1][catCurrentAth + "_name"] = dataAthletes[i - 1].name + ' / ' + dataAthletes[i].name;
+              //break;
+        }
 			}
 		}
   }
